@@ -3,6 +3,12 @@ const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
 const options = {
+  "verbose": {
+    alias: "V",
+    boolean: true,
+    default: false,
+    desc: "Verbose output",
+  },
 };
 
 const harg = yargs(hideBin(process.argv));
@@ -14,8 +20,8 @@ const argv = harg
   .help("h")
   .epilog("copyright 2019").argv;
 
-const pluginName = argv._[0];
-const command = argv._[1];
+const pluginName = argv._.shift();
+const command = argv._.shift();
 
 /**
  * @param {number} code exit code
@@ -41,16 +47,19 @@ if (!plugin) {
   ...opt,
 });
 
+//console.log(">>>>>>>>>>", argv);
+
 (async () => {
   // yanc options from user's package.json
   const { yanc = {} } = require(path.resolve(path.join(process.cwd(), "package.json")));
 
   // call plugin
+  // @ts-ignore
   const res = await plugin[command](
     withDefaultOpts(yanc),
     Object.keys(argv).reduce((acc, k) => {
       // @ts-ignore
-      if (k !== "_" && k !== "$0") acc[k] = argv[k];
+      if (k !== "$0") acc[k] = argv[k];
       return acc;
     }, {})
   );

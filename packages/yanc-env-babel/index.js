@@ -1,19 +1,42 @@
-const fs = require("fs/promises");
 const path = require("path");
-const { fork, exec, spawn } = require('child_process');
+const { fork, spawn } = require('child_process');
 
 const localRoot = __dirname;
 
+//
+/**
+ * convert object to argument string array
+ * 
+ * @param {object} args 
+ * @returns {string[]} argumentified array
+ */
+const _argumentify = (args) => {
+  const arr = [];
+  Object.keys(args).forEach((e) => {
+    // TODO:
+    // How to know whether the arg prefix is '-' or '--'
+    if (e !== "_") {
+      arr.push(`--${e}`);
+      if (typeof args[e] !== "boolean") arr.push(args[e]);
+    } else {
+      arr.push(args[e]);
+    }
+  });
+  return arr;
+}
+
 // run scirpt
 const node = async (opts, args) => {
-  console.log(">>> node: opts:", opts);
-  console.log(">>> args:", args);
+  if (opts.verbose) {
+    console.log(">>> opts:", opts);
+    console.log(">>> args:", args);
+  }
 
   const controller = new AbortController();
   const { signal } = controller;
   const child = fork(
-    "./src/index.js", 
-    ['child'],
+    `${args._.shift()}`, 
+    ..._argumentify(args),
     { 
       signal,
       cwd: opts.rootDir,
@@ -21,11 +44,8 @@ const node = async (opts, args) => {
     });
 
   child.on('error', (err) => {
-    // This will be called with err being an AbortError if the controller aborts
     console.error("!!! [yanc-env-babel]", err);
   });
-  //controller.abort(); // Stops the child process
-
   return 0;
 };
 
@@ -44,12 +64,17 @@ const setup = async (opts, args) => {
 };
 
 const lint = async (opts, args) => {
+  if (opts.verbose) {
+    console.log(">>> opts:", opts);
+    console.log(">>> args:", args);
+  }
+
   const eslit = spawn(
     "./node_modules/.bin/eslint", 
     [
       "--config",
       `${path.join(localRoot, ".eslintrc.js")}`,
-      "."
+      ..._argumentify(args),
     ],
     {
       cwd: opts.rootDir,
@@ -80,14 +105,21 @@ const lint = async (opts, args) => {
 };
 
 const test = async (opts, args) => {
+  if (opts.verbose) {
+    console.log(">>> opts:", opts);
+    console.log(">>> args:", args);
+  }
+
   const jest = spawn(
     "./node_modules/.bin/jest", 
     [
       "--config",
       `${path.join(localRoot, "jest.config.js")}`,
+      "--rootDir",
+      `${opts.rootDir}`,
       "--roots",
       `${opts.rootDir}`,
-      "."
+      ..._argumentify(args),
     ],
     {
       cwd: opts.rootDir,

@@ -4,10 +4,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "setup": "yanc babel setup",
     "dev": "yanc babel node ./src/index.js",
     "test": "yanc babel test",
-    "lint": "yanc babel lint"
+    "lint": "yanc babel lint ."
   },
   "devDependencies": {
     "camel-case": "~4.1.2",
@@ -16,6 +15,7 @@
   },
   "yanc": {
     "configDir": "./config",
+    "verbose": true,
     "envBabel": {
       "configName": ".babelrc"
     }
