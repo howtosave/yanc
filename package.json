@@ -1,0 +1,7 @@
+{
+  "name": "@yanc/root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
