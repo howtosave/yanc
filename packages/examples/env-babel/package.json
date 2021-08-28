@@ -1,5 +1,5 @@
 {
-  "name": "babel-example",
+  "name": "env-babel-example",
   "private": true,
   "version": "1.0.0",
   "main": "index.js",
@@ -15,14 +15,14 @@
   },
   "yanc": {
     "configDir": "./config",
-    "verbose": true,
+    "verbose": false,
     "envBabel": {
       "configName": ".babelrc"
     }
   },
   "license": "MIT",
   "workspaces": [
-    "../yanc-cli",
-    "../yanc-env-babel"
+    "../../yanc-cli",
+    "../../yanc-env-babel"
   ]
 }

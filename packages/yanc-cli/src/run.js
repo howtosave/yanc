@@ -3,12 +3,6 @@ const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
 const options = {
-  "verbose": {
-    alias: "V",
-    boolean: true,
-    default: false,
-    desc: "Verbose output",
-  },
 };
 
 const harg = yargs(hideBin(process.argv));
