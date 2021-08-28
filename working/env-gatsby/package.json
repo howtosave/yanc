@@ -20,7 +20,6 @@
     "@yanc/env-gatsby": "*"
   },
   "yanc": {
-    "verbose": true,
     "envGatsby": {
       "srcDir": "./src",
       "staticDir": "./static",
