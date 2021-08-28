@@ -1,9 +1,8 @@
-const path = require('path');
+const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
-const options = {
-};
+const options = {};
 
 const harg = yargs(hideBin(process.argv));
 const argv = harg
@@ -34,7 +33,7 @@ if (!plugin) {
 /**
  * @param {any} opt user option
  */
- const withDefaultOpts = (opt) => ({
+const withDefaultOpts = (opt) => ({
   srcDir: "./src",
   configDir: "./config",
   rootDir: process.cwd(),
@@ -48,11 +47,9 @@ if (!plugin) {
   const { yanc = {} } = require(path.resolve(path.join(process.cwd(), "package.json")));
 
   // call plugin
-  // @ts-ignore
   const res = await plugin[command](
     withDefaultOpts(yanc),
     Object.keys(argv).reduce((acc, k) => {
-      // @ts-ignore
       if (k !== "$0") acc[k] = argv[k];
       return acc;
     }, {})

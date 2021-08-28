@@ -3,11 +3,13 @@
 
 module.exports = {
   // module resolution
-//  rootDir: ".",
+  //  rootDir: ".",
   // moduleNameMapper: {
   //   ...pathconfig.jest,
   // },
   // test env
   testEnvironment: "node",
-  preset: "ts-jest/presets/js-with-ts",
+  transform: {
+    "\\.[jt]sx?$": "babel-jest",
+  },
 };

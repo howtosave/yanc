@@ -2,19 +2,19 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/src/*": ["./src/*"],
-      "@/lib/*": ["./src/lib/*"]
+      "~/src/*": ["./_src/*"],
+      "~/lib/*": ["./_src/lib/*"]
     }
   },
   "babel": {
     "root": ".",
     "alias": {
-      "@/src": "./src",
-      "@/lib": "./src/lib"
+      "~/src": "./_src",
+      "~/lib": "./_src/lib"
     }
   },
   "jest": {
-    "^@/src/(.*)$": "<rootDir>/src/$1",
-    "^@/lib/(.*)$": "<rootDir>/src/lib/$1"
+    "^~/src/(.*)$": "<rootDir>/_src/$1",
+    "^~/lib/(.*)$": "<rootDir>/_src/lib/$1"
   }
 }

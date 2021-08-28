@@ -2,7 +2,7 @@
   "name": "@yanc/root",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/**/*"
   ],
   "resolutions": {
     "react": "~17.0.2",
