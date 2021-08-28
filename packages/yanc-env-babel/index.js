@@ -1,7 +1,7 @@
 const path = require("path");
 const { fork, spawn } = require('child_process');
 
-const localRoot = __dirname;
+const localRootDir = __dirname;
 
 //
 /**
@@ -19,7 +19,7 @@ const _argumentify = (args) => {
       arr.push(`--${e}`);
       if (typeof args[e] !== "boolean") arr.push(args[e]);
     } else {
-      arr.push(args[e]);
+      arr.concat(args[e]);
     }
   });
   return arr;
@@ -73,7 +73,7 @@ const lint = async (opts, args) => {
     "./node_modules/.bin/eslint", 
     [
       "--config",
-      `${path.join(localRoot, ".eslintrc.js")}`,
+      `${path.join(localRootDir, ".eslintrc.js")}`,
       ..._argumentify(args),
     ],
     {
@@ -114,7 +114,7 @@ const test = async (opts, args) => {
     "./node_modules/.bin/jest", 
     [
       "--config",
-      `${path.join(localRoot, "jest.config.js")}`,
+      `${path.join(localRootDir, "jest.config.js")}`,
       "--rootDir",
       `${opts.rootDir}`,
       "--roots",

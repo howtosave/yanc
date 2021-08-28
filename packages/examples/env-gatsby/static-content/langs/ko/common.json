@@ -1,0 +1,17 @@
+{
+  "notFound": "페이지를 찾을 수 없습니다.",
+
+  "navibar.home": "홈",
+  "navibar.articles": "아티클",
+  "navibar.posts": "포스트",
+  "navibar.profile": "프로필",
+  "navibar.login": "로그인",
+  "navibar.logout": "로그아웃",
+  "navibar.signup": "회원가입",
+
+  "login.email": "이메일",
+  "login.password": "패스워드",
+  "login.submit": "로그인",
+  "auth-button.login": "로그인",
+  "auth-button.logout": "로그아웃"
+}

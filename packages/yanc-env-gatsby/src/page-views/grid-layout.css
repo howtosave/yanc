@@ -1,0 +1,63 @@
+/*
+header, main, footer,
+h3, h4 {
+  border: thin dashed red;
+}
+*/
+
+/*
+ * Header
+ */
+.page-header {
+  min-height: 8vh;
+  background-color: green;
+}
+
+.page-header .container-fluid {
+  color: white;
+}
+
+/*
+ * Main
+ */
+.page-main {
+  background-color: aqua;
+  /* specify height for vertical align, 'align-items-center' */
+  height: 84vh;
+}
+
+.page-main .container {
+  color: blue;
+  /* specify height for vertical align, 'align-items-center' */
+  height: inherit;
+}
+
+.page-main .container .row {
+  /* specify height for vertical align, 'align-items-center' */
+  height: inherit;
+}
+
+/*
+ * Footer
+ */
+.page-footer {
+  background-color: black;
+  /* specify height for vertical align, 'align-items-center' */
+  height: 8vh;
+}
+
+.page-footer .container-fluid {
+  background-color: rgb(51, 39, 39);
+  color: white;
+  /* specify height for vertical align, 'align-items-center' */
+  height: inherit;
+}
+
+.page-footer .container-fluid .row {
+  /* specify height for vertical align, 'align-items-center' */
+  height: inherit;
+}
+
+.page-footer h4 {
+  color: gray;
+}

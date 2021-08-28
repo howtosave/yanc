@@ -1,0 +1,37 @@
+{
+  "name": "env-gatsby-example",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "setup": "yanc gatsby setup",
+    "dev": "yanc gatsby develop",
+    "test": "yanc gatsby test",
+    "lint": "yanc gatsby lint .",
+    "build": "yanc gatsby build",
+    "build:prod": "NODE_ENV=production yanc gatsby build",
+    "clean": "yanc gatsby clean",
+    "serve": "yanc gatsby serve --port 9000",
+    "storybook": "yanc storybook --port 6006 --static-dir public"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@yanc/cli": "*",
+    "@yanc/env-gatsby": "*"
+  },
+  "yanc": {
+    "verbose": true,
+    "envGatsby": {
+      "srcDir": "./src",
+      "staticDir": "./static",
+      "staticContentDir": "./static-content"
+    }
+  },
+  "author": "PK <peterhs.kang@gmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "../../yanc-cli",
+    "../../yanc-env-gatsby",
+    "../../gatsby-theme-my-i18n"
+  ]
+}

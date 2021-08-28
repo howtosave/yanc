@@ -1,0 +1,24 @@
+@import '../styles/variables';
+
+.page-footer {
+  height: 12vh;
+  background-color: $color-primary;
+}
+
+.page-footer .container-fluid {
+  color: white;
+  height: inherit;
+}
+
+.page-footer .container-fluid .row {
+  /* specify height for vertical align, 'align-items-center' */
+  height: inherit;
+}
+
+.notice-col {
+  color: white;
+}
+
+.notice-col h4 {
+  margin: 0;
+}

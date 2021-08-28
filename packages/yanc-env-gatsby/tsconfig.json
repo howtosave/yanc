@@ -1,0 +1,20 @@
+{
+  "extends": "./pathconfig", // extends compilerOptions.baseUrl and paths
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "jsx": "preserve",
+  },
+  "include": ["./src/**/*", "./static-content/**/*"],
+  "exclude": ["node_modules", "public", ".cache", "tmp", "**/*-draft"]
+}

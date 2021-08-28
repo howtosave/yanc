@@ -1,0 +1,26 @@
+overwrite: true
+documents:
+  - "src/**/!(*.d).{ts,tsx}"
+  - "node_modules/gatsby-transformer-sharp/!(node_modules)/**/*.js"
+schema:
+  # fetch graphql schema from gatsby dev server
+  - "http://localhost:8000/___graphql"
+  #- "src/__generated__/gatsby-schema.json"
+
+  # fetch graphql schema from strapi dev server
+  #- "http://localhost:1337/___gql"
+  # - "src/__generated__/strapi-schema.json"
+generates:
+  src/__generated__/gatsby-graphql.d.ts:
+    config:
+      noExport: true
+    #typesSuffix: "I"
+    plugins:
+      - "typescript"
+      - add:
+          content:
+            - 'declare namespace Gql {'
+      - add:
+          placement: 'append'
+          content: '}'
+      - typescript-operations

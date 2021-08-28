@@ -1,0 +1,16 @@
+[
+  {
+    "code": "ko",
+    "hrefLang": "ko-KR",
+    "name": "Korean",
+    "localName": "한글",
+    "dateFormat": "YYYY/MM/DD"
+  },
+  {
+    "code": "en",
+    "hrefLang": "en-US",
+    "name": "English",
+    "localName": "English",
+    "dateFormat": "MM/DD/YYYY"
+  }
+]

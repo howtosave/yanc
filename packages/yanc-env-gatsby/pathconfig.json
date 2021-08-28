@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { 
+      "~/site-config": ["./src/site-config"],
+      "~/langs/*": ["./static-content/langs/*"]
+    }
+  },
+  "babel": {
+    "root": ".",
+    "alias": {
+      "~/site-config": "./src/site-config",
+      "~/langs": "./static-content/langs"
+    }
+  },
+  "jest": {
+    "^~/site-config$": "<rootDir>/src/site-config",
+    "^~/langs/(.*)$": "<rootDir>/static-content/langs/$1"
+  },
+  "webpack": {
+    "~/site-config": "/src/site-config",
+    "~/langs": "/static-content/langs"
+  }
+}
