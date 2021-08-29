@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import { LocaleList } from "./LocaleList";
 
 type Props = {
   children?: ReactNode;
@@ -37,6 +38,9 @@ const Layout: React.FC<Props> = ({ children, title = "This is the default title"
     <footer>
       <hr />
       <span>I&apos;m here to stay (Footer)</span>
+      <span>
+        <LocaleList />
+      </span>
     </footer>
   </div>
 );
