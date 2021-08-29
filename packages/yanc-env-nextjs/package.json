@@ -12,9 +12,16 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "aos": "~2.3.4",
+    "bootstrap": "~5.1.0",
+    "bootstrap-icons": "~1.5.0",
+    "boxicons": "~2.0.9",
+    "isotope-layout": "~3.0.6",
     "next": "~11.1.0",
     "react": "~17.0.2",
-    "react-dom": "~17.0.2"
+    "react-dom": "~17.0.2",
+    "remixicon": "~2.5.0",
+    "swiper": "~6.8.1"
   },
   "devDependencies": {
     "@types/node": "~16.7.0",
