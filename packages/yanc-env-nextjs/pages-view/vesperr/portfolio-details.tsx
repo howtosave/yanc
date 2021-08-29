@@ -1,18 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable dot-notation */
-import React, { ReactElement, createElement as _e } from "react";
+import React, { createElement as _e } from "react";
 
 import SwiperCore, { Navigation, Pagination, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/swiper.scss";
-import "swiper/components/navigation/navigation.scss";
-import "swiper/components/pagination/pagination.scss";
-import "swiper/components/scrollbar/scrollbar.scss";
 
 import AOS from "aos";
-import "aos/dist/aos.css";
 
-import "./glightbox.min.css";
+//import "./glightbox.min.css";
 //import "./style.css";
 
 // install Swiper modules

@@ -11,6 +11,9 @@
     "serve": "serve -p 9000 out",
     "build:next": "next build",
     "start": "next start",
+    "sb": "start-storybook -p 6006",
+    "sb:build": "build-storybook -s public/",
+    "sb:serve": "serve -p 6000 storybook-static",
     "type-check": "tsc"
   },
   "dependencies": {
@@ -26,6 +29,11 @@
     "swiper": "~6.8.1"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "~6.3.7",
+    "@storybook/addon-links": "~6.3.7",
+    "@storybook/builder-webpack5": "~6.3.7",
+    "@storybook/manager-webpack5": "~6.3.7",
+    "@storybook/react": "~6.3.7",
     "@types/node": "~16.7.0",
     "@types/react": "~17.0.2",
     "@types/react-dom": "~17.0.2",
