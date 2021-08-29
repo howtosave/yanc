@@ -1,0 +1,19 @@
+{
+  "pageLoading": "Loading...",
+  "offlineMode": "We are in offline mode from our application server",
+  "notFound": "Page not found",
+
+  "navibar.home": "Home",
+  "navibar.articles": "Articles",
+  "navibar.posts": "Posts",
+  "navibar.profile": "Profile",
+  "navibar.login": "Login",
+  "navibar.logout": "Logout",
+  "navibar.signup": "SignUp",
+  
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.submit": "Login",
+  "auth-button.login": "Login",
+  "auth-button.logout": "Logout"
+}

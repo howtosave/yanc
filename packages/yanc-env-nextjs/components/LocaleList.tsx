@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-onchange */
-import React, { useContext } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 
 let s = require("./locale-list.module.css");
@@ -30,12 +30,6 @@ const View: React.FC<PropsView> = ({ locales, currentLocale, onChange }) => (
 );
 
 interface Props {}
-
-const getLangCodeFromPath = (langConfig: any[], pathName: string): string => {
-  const [, langCode] = pathName.split("/");
-  if (langCode.length !== 2 || langConfig.findIndex((e) => e.code === langCode) === -1) return "";
-  return langCode;
-};
 
 const localeInfo = {
   "ko-KR": {
