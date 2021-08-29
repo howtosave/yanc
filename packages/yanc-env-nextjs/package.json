@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build && next export",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "serve": "serve -p 9000 out",
     "build:next": "next build",
     "start": "next start",
@@ -27,6 +29,14 @@
     "@types/node": "~16.7.0",
     "@types/react": "~17.0.2",
     "@types/react-dom": "~17.0.2",
+    "eslint": "~7.26.0",
+    "eslint-config-next": "11.1.0",
+    "eslint-config-prettier": "~8.3.0",
+    "eslint-import-resolver-babel-module": "~5.3.1",
+    "eslint-plugin-import": "~2.24.2",
+    "eslint-plugin-jest": "~24.4.0",
+    "eslint-plugin-json": "~3.1.0",
+    "eslint-plugin-prettier": "~3.4.0",
     "serve": "~12.0.0",
     "typescript": "~4.4.2"
   }
