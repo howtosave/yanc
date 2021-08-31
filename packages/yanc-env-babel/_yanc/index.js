@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const { fork, spawn } = require("child_process");
+const _ = require("lodash");
+
 var Module = require("module");
 
 const localRootDir = path.join(__dirname, "..");
@@ -35,6 +37,52 @@ const _find_bin = (name) => {
   }
   return "";
 };
+
+const _find_module_dir = (name, name2) => {
+  const mpaths = Module._nodeModulePaths(process.cwd());
+  for (const mpath of mpaths) {
+    const modPath = path.join(mpath, name);
+    if (fs.existsSync(modPath)) return modPath;
+  }
+  return "";
+}
+
+const _ensure_cache_dir = () => {
+  const cacheDir = path.join(_find_module_dir("@yanc", "env-bable"), "..", ".cache", "@yanc", "env-bable");
+  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+  return cacheDir;
+}
+
+const _merge_eslint_config = (opts) => {
+  const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "eslint.config"));
+  let configPath;
+  if (fs.existsSync(remoteConfigFile + ".js") || fs.existsSync(remoteConfigFile + ".json")) {
+    const cacheDir = _ensure_cache_dir();
+    const config = _.merge(require("../.eslintrc"), require(remoteConfigFile));
+    configPath = path.join(cacheDir, "eslintrc.json");
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  } else {
+    configPath = path.join(localRootDir, ".eslintrc.js");
+  }
+
+  return configPath;
+}
+
+const _merge_jest_config = (opts) => {
+  const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "jest.config"));
+  let configPath;
+
+  if (fs.existsSync(remoteConfigFile + ".js") || fs.existsSync(remoteConfigFile + ".json")) {
+    const cacheDir = _ensure_cache_dir();
+    const config = _.merge(require("../jest.config"), require(remoteConfigFile));
+    configPath = path.join(cacheDir, "jest.config.json");
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  } else {
+    configPath = path.join(localRootDir, "jest.config.js");
+  }
+  return configPath;
+}
+
 // run scirpt
 const node = async (opts, args) => {
   if (opts.verbose) {
@@ -71,14 +119,16 @@ const lint = async (opts, args) => {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
+
   const binPath = _find_bin("eslint");
-  const configPath = `${path.join(localRootDir, ".eslintrc.js")}`;
+  const configPath = _merge_eslint_config(opts);
+
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
     console.log(">>> config file path:", configPath);
   }
 
-  const eslit = spawn(binPath, ["--config", configPath, ..._argumentify(args)], {
+  const eslit = spawn(binPath, ["--no-eslintrc", "--config", configPath, ..._argumentify(args)], {
     cwd: opts.rootDir,
     env: { ...process.env, FORCE_COLOR: "1" },
   });
@@ -97,7 +147,9 @@ const test = async (opts, args) => {
     console.log(">>> args:", args);
   }
   const binPath = _find_bin("jest");
-  const configPath = `${path.join(localRootDir, "jest.config.js")}`;
+  //const configPath = `${path.join(localRootDir, "jest.config.js")}`;
+  const configPath = _merge_jest_config(opts);
+
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
     console.log(">>> config file path:", configPath);

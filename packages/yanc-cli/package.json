@@ -1,6 +1,5 @@
 {
   "name": "@yanc/cli",
-  "private": true,
   "version": "1.0.0",
   "bin": {
     "yanc": "bin/yanc.js"
