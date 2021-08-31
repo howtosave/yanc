@@ -45,13 +45,19 @@ const _find_module_dir = (name, name2) => {
     if (fs.existsSync(modPath)) return modPath;
   }
   return "";
-}
+};
 
 const _ensure_cache_dir = () => {
-  const cacheDir = path.join(_find_module_dir("@yanc", "env-bable"), "..", ".cache", "@yanc", "env-bable");
+  const cacheDir = path.join(
+    _find_module_dir("@yanc", "env-bable"),
+    "..",
+    ".cache",
+    "@yanc",
+    "env-bable"
+  );
   if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
   return cacheDir;
-}
+};
 
 const _merge_eslint_config = (opts) => {
   const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "eslint.config"));
@@ -66,7 +72,7 @@ const _merge_eslint_config = (opts) => {
   }
 
   return configPath;
-}
+};
 
 const _merge_jest_config = (opts) => {
   const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "jest.config"));
@@ -81,7 +87,7 @@ const _merge_jest_config = (opts) => {
     configPath = path.join(localRootDir, "jest.config.js");
   }
   return configPath;
-}
+};
 
 // run scirpt
 const node = async (opts, args) => {
