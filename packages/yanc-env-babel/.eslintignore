@@ -9,6 +9,7 @@ dist/
 cache/
 .cache/
 tmp/
+deprecated/
 
 # nodejs files
 package-lock.json

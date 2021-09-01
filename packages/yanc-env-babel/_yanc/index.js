@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { fork, spawn } = require("child_process");
+const { exec, fork, spawn } = require("child_process");
 const _ = require("lodash");
 
 var Module = require("module");
@@ -14,18 +14,19 @@ const localRootDir = path.join(__dirname, "..");
  * @param {object} args
  * @returns {string[]} argumentified array
  */
-const _argumentify = (args) => {
+const _argumentify = (args, useStringify = true) => {
   const arr = [];
   Object.keys(args).forEach((e) => {
     // TODO:
     // How to know whether the arg prefix is '-' or '--'
-    if (e !== "_") {
-      arr.push(`--${e}`);
-      if (typeof args[e] !== "boolean") arr.push(args[e]);
+    if (e === "_") {
+      arr.push(...(useStringify ? args[e].map((i) => JSON.stringify(i)) : args[e]));
     } else {
-      arr.concat(args[e]);
+      arr.push(`--${e}`);
+      if (typeof args[e] !== "boolean") arr.push(JSON.stringify(args[e]));
     }
   });
+  //console.log(">>>>>>>>>>>>>>>>", arr, args["_"].map((i) => JSON.stringify(i)));
   return arr;
 };
 
@@ -59,138 +60,126 @@ const _ensure_cache_dir = () => {
   return cacheDir;
 };
 
-const _merge_eslint_config = (opts) => {
-  const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "eslint.config"));
+const _update_eslint_config = (opts, { reset = false }) => {
+  const remoteConfigToMerge =
+    opts.envBabel && opts.envBabel.lintConfigFile
+      ? path.resolve(path.join(opts.rootDir, opts.envBabel.lintConfigFile))
+      : path.resolve(path.join(opts.rootDir, ".eslintrc.json"));
+
   let configPath;
-  if (fs.existsSync(remoteConfigFile + ".js") || fs.existsSync(remoteConfigFile + ".json")) {
-    const cacheDir = _ensure_cache_dir();
-    const config = _.merge(require("../.eslintrc"), require(remoteConfigFile));
-    configPath = path.join(cacheDir, "eslintrc.json");
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  let config;
+  if (!reset && fs.existsSync(remoteConfigToMerge)) {
+    config = _.mergeWith(
+      require(remoteConfigToMerge), // remote, obj
+      require("../.eslintrc"), // local, src
+      (objVal, srcVal, key, object) => {
+        if (objVal === undefined) {
+          // skip when no key on remote's
+          _.unset(object, key);
+        } else if (objVal !== srcVal) {
+          // use remote's value
+          return objVal;
+        }
+      }
+    );
   } else {
-    configPath = path.join(localRootDir, ".eslintrc.js");
+    config = require("../.eslintrc");
   }
+  configPath = path.join(opts.rootDir, ".eslintrc.json");
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
   return configPath;
 };
 
-const _merge_jest_config = (opts) => {
-  const remoteConfigFile = path.resolve(path.join(opts.rootDir, opts.configDir, "jest.config"));
-  let configPath;
+const _update_babel_config = (opts, { reset = false }) => {
+  const remoteConfigToMerge =
+    opts.envBabel && opts.envBabel.babelConfigFile
+      ? path.resolve(path.join(opts.rootDir, opts.envBabel.babelConfigFile))
+      : path.resolve(path.join(opts.rootDir, ".babelrc.json"));
 
-  if (fs.existsSync(remoteConfigFile + ".js") || fs.existsSync(remoteConfigFile + ".json")) {
-    const cacheDir = _ensure_cache_dir();
-    const config = _.merge(require("../jest.config"), require(remoteConfigFile));
-    configPath = path.join(cacheDir, "jest.config.json");
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  let configPath;
+  let config;
+  if (!reset && fs.existsSync(remoteConfigToMerge)) {
+    config = _.mergeWith(
+      require(remoteConfigToMerge), // remote, obj
+      require("../.babelrc"), // local, src
+      (objVal, srcVal, key, object) => {
+        if (objVal === undefined) {
+          // skip when no key on remote's
+          _.unset(object, key);
+        } else if (objVal !== srcVal) {
+          // use remote's value
+          return objVal;
+        }
+      }
+    );
   } else {
-    configPath = path.join(localRootDir, "jest.config.js");
+    config = require("../.babelrc");
   }
+  configPath = path.join(opts.rootDir, ".babelrc.json");
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+
+  return configPath;
+};
+
+const _update_jest_config = (opts, { reset = false }) => {
+  const remoteConfigToMerge =
+    opts.envBabel && opts.envBabel.jestConfigFile
+      ? path.resolve(path.join(opts.rootDir, opts.envBabel.jestConfigFile))
+      : path.resolve(path.join(opts.rootDir, "jest.config.js"));
+
+  let configPath;
+  let config;
+  if (!reset && fs.existsSync(remoteConfigToMerge)) {
+    const remote = JSON.parse(JSON.stringify(require(remoteConfigToMerge)));
+    const local = JSON.parse(JSON.stringify(require("../jest.config")));
+
+    config = _.mergeWith(
+      remote, // remote, obj
+      local, // local, src
+      (objVal, srcVal, key, object, source) => {
+        //if (key === "testEnvironment") console.log(">>>>>>>", objVal, srcVal, object[key], source[key]);
+        if (objVal === undefined) {
+          // skip when no key on remote's
+          //
+          // TODO: !!! does not work !!!
+          // make this property skip
+          _.unset(object, key);
+        } else if (objVal !== srcVal) {
+          // use remote's value
+          return objVal;
+        }
+      }
+    );
+  } else {
+    config = require("../jest.config");
+  }
+  configPath = path.join(opts.rootDir, "jest.config.js");
+  fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(config, null, 2)};\n`);
   return configPath;
 };
 
 // run scirpt
-const node = async (opts, args) => {
+const update = async (opts, args) => {
   if (opts.verbose) {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
 
-  const child = fork(`${args._.shift()}`, ..._argumentify(args), {
-    cwd: opts.rootDir,
-  });
+  const lintConfigPath = _update_eslint_config(opts, args);
+  console.log(">>> [yanc-env-babel] updated lint config file:", lintConfigPath);
 
-  child.on("error", (err) => {
-    console.error("!!! [yanc-env-babel]", err);
-  });
-  return 0;
-};
+  const jestConfigPath = _update_jest_config(opts, args);
+  console.log(">>> [yanc-env-babel] updated jest config file:", jestConfigPath);
 
-const setup = async (opts, args) => {
-  /*
-  const relativeRoot = path.relative(localRoot, opts.rootDir);
-  console.log(">>> ", relativeRoot);
-  const err = await fs.symlink(
-    path.join(relativeRoot, opts.srcDir), 
-    path.join(__dirname, "src"),
-    "dir"
-  );
-  return err ? 1 : 0;
-  */
-  return 0;
-};
-
-const lint = async (opts, args) => {
-  if (opts.verbose) {
-    console.log(">>> opts:", opts);
-    console.log(">>> args:", args);
-  }
-
-  const binPath = _find_bin("eslint");
-  const configPath = _merge_eslint_config(opts);
-
-  if (opts.verbose) {
-    console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPath);
-  }
-
-  const eslit = spawn(binPath, ["--no-eslintrc", "--config", configPath, ..._argumentify(args)], {
-    cwd: opts.rootDir,
-    env: { ...process.env, FORCE_COLOR: "1" },
-  });
-
-  eslit.stdout.on("data", (data) => console.log(`${data}`));
-  eslit.stderr.on("data", (data) => console.error(`${data}`));
-  eslit.on("close", (code) => code !== 0 && console.error(`lint process exited with code ${code}`));
-  eslit.on("error", (err) => console.error("!!! [yanc-env-babel:lint]", err));
-
-  return 0;
-};
-
-const test = async (opts, args) => {
-  if (opts.verbose) {
-    console.log(">>> opts:", opts);
-    console.log(">>> args:", args);
-  }
-  const binPath = _find_bin("jest");
-  //const configPath = `${path.join(localRootDir, "jest.config.js")}`;
-  const configPath = _merge_jest_config(opts);
-
-  if (opts.verbose) {
-    console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPath);
-  }
-
-  const jest = spawn(
-    binPath,
-    [
-      "--config",
-      configPath,
-      "--rootDir",
-      `${opts.rootDir}`,
-      "--roots",
-      `${opts.rootDir}`,
-      ..._argumentify(args),
-    ],
-    {
-      cwd: opts.rootDir,
-      env: { ...process.env, FORCE_COLOR: "1" },
-    }
-  );
-
-  jest.stdout.on("data", (data) => console.log(`${data}`));
-  jest.stderr.on("data", (data) => console.error(`${data}`));
-  jest.on("close", (code) => code !== 0 && console.error(`jest process exited with code ${code}`));
-  jest.on("error", (err) => console.error("!!! [yanc-env-babel:jest]", err));
+  const babelConfigPath = _update_babel_config(opts, args);
+  console.log(">>> [yanc-env-babel] updated babel config file:", babelConfigPath);
 
   return 0;
 };
 
 module.exports = {
-  node,
-  setup,
-  lint,
-  test,
+  update,
 };
 
 /*

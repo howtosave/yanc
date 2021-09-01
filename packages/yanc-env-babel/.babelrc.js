@@ -4,8 +4,8 @@ const useReact = false;
 
 module.exports = {
   test: [
-    /\.js$/,
-    /\.ts$/,
+    "**/*.js",
+    "**/*.ts",
   ],
   presets: [
     [
@@ -48,7 +48,10 @@ module.exports = {
       ]
     },
     production: {
-      ignore: [/\.spec\.js$/,/\.spec\.ts$/],
+      ignore: [
+        "**/*.spec.js",
+        "**/*.spec.ts",
+      ],
       comments: false,
     }
   },
