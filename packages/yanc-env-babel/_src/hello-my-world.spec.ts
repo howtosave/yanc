@@ -1,6 +1,6 @@
-import { hello, my, world } from "./index";
+import { hello, my, world } from "./hello-my-world";
 
-describe("# index", () => {
+describe("# hello-my-world", () => {
   it("## hello", () => {
     expect(hello()).not.toBe(null);
   });
