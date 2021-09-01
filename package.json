@@ -12,7 +12,7 @@
     "webpack-dev-server": "~4.0.0"
   },
   "scripts": {
-    "ver:all": "yarn workspaces foreach -pA --from '@yanc/*' run ver patch"
+    "ver:all": "yarn workspaces foreach --from '@yanc/*' run ver patch"
   },
   "workspaces": [
     "packages/**/*",
