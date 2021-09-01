@@ -5,6 +5,8 @@ const _ = require("lodash");
 
 var Module = require("module");
 
+const localRootDir = path.join(__dirname, "..");
+
 //
 // Util function for _export
 //
@@ -108,6 +110,42 @@ const _update_jest_config = (opts, { reset = false }) => {
   return configPath;
 };
 
+const _update_json_config = (jsonFile, opts, { reset = false }, isJson5 = false) => {
+  const remoteConfigToMerge = path.resolve(path.join(opts.rootDir, jsonFile));
+
+  let configPath;
+  let config;
+  if (!reset && fs.existsSync(remoteConfigToMerge)) {
+    if (isJson5) {
+      // TODO load json5
+      config = fs.readFileSync(path.resolve(path.join(localRootDir, jsonFile)), "utf-8");
+    } else {
+      config = _.mergeWith(
+        require(remoteConfigToMerge), // remote, obj
+        require(`../${jsonFile}`), // local, src
+        (objVal, srcVal, key, object) => {
+          if (objVal === undefined) {
+            // skip when no key on remote's
+            _.unset(object, key);
+          } else if (objVal !== srcVal) {
+            // use remote's value
+            return objVal;
+          }
+        }
+      );
+    }
+  } else {
+    config = require(`../${jsonFile}`);
+  }
+  configPath = path.join(opts.rootDir, jsonFile);
+  fs.writeFileSync(
+    configPath,
+    typeof config === "object" ? JSON.stringify(config, null, 2) : config
+  );
+
+  return configPath;
+};
+
 /**
  * exports config files
  *
@@ -128,6 +166,20 @@ const _export = async (opts, args) => {
 
   const babelConfigPath = _update_babel_config(opts, args);
   console.log(">>> [yanc-env-babel] updated babel config file:", babelConfigPath);
+
+  const pathConfigPath = _update_json_config("pathconfig.json", opts, args);
+  console.log(">>> [yanc-env-babel] updated pathconfig config file:", pathConfigPath);
+
+  //
+  // TODO: merge json5
+  //
+
+  const tsConfigPath = _update_json_config("tsconfig.json", opts, args, true);
+  console.log(">>> [yanc-env-babel] updated tsconfig config file:", tsConfigPath);
+
+  const jsConfigPath = _update_json_config("jsconfig.json", opts, args, true);
+  console.log(">>> [yanc-env-babel] updated jsconfig config file:", jsConfigPath);
+
 
   return 0;
 };

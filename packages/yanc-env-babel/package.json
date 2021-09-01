@@ -3,8 +3,7 @@
   "version": "1.1.0",
   "main": "_yanc/index.js",
   "scripts": {
-    "dev2": "ts-node -r tsconfig-paths/register ./_src/index.ts",
-    "dev": "node ./index.js",
+    "dev": "node ./_src/index.js",
     "dev:lib": "jest --watch ./_src/*",
     "start": "node dist/index.js",
     "dist": "yarn dist:clean && babel ./_src -x .js,.ts --out-dir ./dist --env-name production && ls -al ./dist",
@@ -19,7 +18,9 @@
     ".babelrc.js",
     ".eslintrc.js",
     "jest.config.js",
-    "pathconfig.json"
+    "pathconfig.json",
+    "jsconfig.json",
+    "tsconfig.json"
   ],
   "dependencies": {
     "@babel/cli": "~7.14.8",
