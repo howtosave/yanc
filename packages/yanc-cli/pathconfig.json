@@ -2,8 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/src/*": ["./_src/*"],
-      "~/lib/*": ["./_src/lib/*"]
+      "~/src/*": [
+        "./_src/*"
+      ],
+      "~/lib/*": [
+        "./_src/lib/*"
+      ]
     }
   },
   "babel": {
