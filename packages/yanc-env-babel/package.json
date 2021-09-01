@@ -1,6 +1,6 @@
 {
   "name": "@yanc/env-babel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "_yanc/index.js",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register ./_src/index.ts",

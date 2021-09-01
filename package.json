@@ -1,5 +1,6 @@
 {
   "name": "@yanc/root",
+  "version": "1.0.1",
   "private": true,
   "resolutions": {
     "@babel/core": "~7.15.0",
