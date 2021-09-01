@@ -16,7 +16,8 @@
   "files": [
     ".babelrc.js",
     ".eslintrc.js",
-    "jest.config.js"
+    "jest.config.js",
+    "pathconfig.json"
   ],
   "dependencies": {
     "@babel/cli": "~7.14.8",
