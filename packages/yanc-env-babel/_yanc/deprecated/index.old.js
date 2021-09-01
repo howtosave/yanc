@@ -7,7 +7,7 @@ var Module = require("module");
 
 const localRootDir = path.join(__dirname, "..");
 
-//
+
 /**
  * convert object to argument string array
  *

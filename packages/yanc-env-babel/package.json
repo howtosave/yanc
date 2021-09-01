@@ -20,7 +20,7 @@
     "jest.config.js",
     "pathconfig.json"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "@babel/cli": "~7.14.8",
     "@babel/core": "~7.15.0",
     "@babel/eslint-parser": "~7.15.0",
