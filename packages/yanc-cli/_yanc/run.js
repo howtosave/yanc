@@ -39,8 +39,7 @@ if (!plugin) {
  * @param {any} opt user option
  */
 const withDefaultOpts = (opt) => ({
-  srcDir: "./src",
-  configDir: "./config",
+  verbose: false,
   rootDir: process.cwd(),
   ...opt,
 });

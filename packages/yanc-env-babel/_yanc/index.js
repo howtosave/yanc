@@ -1,64 +1,10 @@
 const fs = require("fs");
 const path = require("path");
-const { exec, fork, spawn } = require("child_process");
 const _ = require("lodash");
 
 var Module = require("module");
 
 const localRootDir = path.join(__dirname, "..");
-
-//
-/**
- * convert object to argument string array
- *
- * @param {object} args
- * @returns {string[]} argumentified array
- */
-const _argumentify = (args, useStringify = true) => {
-  const arr = [];
-  Object.keys(args).forEach((e) => {
-    // TODO:
-    // How to know whether the arg prefix is '-' or '--'
-    if (e === "_") {
-      arr.push(...(useStringify ? args[e].map((i) => JSON.stringify(i)) : args[e]));
-    } else {
-      arr.push(`--${e}`);
-      if (typeof args[e] !== "boolean") arr.push(JSON.stringify(args[e]));
-    }
-  });
-  //console.log(">>>>>>>>>>>>>>>>", arr, args["_"].map((i) => JSON.stringify(i)));
-  return arr;
-};
-
-const _find_bin = (name) => {
-  const mpaths = Module._nodeModulePaths(process.cwd());
-  for (const mpath of mpaths) {
-    const binPath = path.join(mpath, ".bin", name);
-    if (fs.existsSync(binPath)) return binPath;
-  }
-  return "";
-};
-
-const _find_module_dir = (name, name2) => {
-  const mpaths = Module._nodeModulePaths(process.cwd());
-  for (const mpath of mpaths) {
-    const modPath = path.join(mpath, name);
-    if (fs.existsSync(modPath)) return modPath;
-  }
-  return "";
-};
-
-const _ensure_cache_dir = () => {
-  const cacheDir = path.join(
-    _find_module_dir("@yanc", "env-bable"),
-    "..",
-    ".cache",
-    "@yanc",
-    "env-bable"
-  );
-  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-  return cacheDir;
-};
 
 const _update_eslint_config = (opts, { reset = false }) => {
   const remoteConfigToMerge =
@@ -181,21 +127,3 @@ const update = async (opts, args) => {
 module.exports = {
   update,
 };
-
-/*
-#
-# FAILURE trial
-#
-exec(`./node_modules/.bin/eslint --config ${path.join(localRoot, ".eslintrc.js")} .`,
-{
-  cwd: opts.rootDir,
-},
-(error, stdout, stderr) => {
-  if (error) {
-    console.error(`exec error: ${error}`);
-    return;
-  }
-  console.log(`${stdout}`);
-  console.error(`${stderr}`);
-});
-*/
