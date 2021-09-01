@@ -7,9 +7,14 @@ const options = {};
 const harg = yargs(hideBin(process.argv));
 const argv = harg
   .usage("Usage: $0 <env> <command> [options]")
-  .example("$0 babel develop", "")
+  .example("$0 babel test", "")
   .options(options)
   .demandCommand(2)
+  // see https://github.com/yargs/yargs-parser#configuration
+  .parserConfiguration({
+    "boolean-negation": false,
+    "camel-case-expansion": false,
+  })
   .help("h")
   .epilog("copyright 2019").argv;
 

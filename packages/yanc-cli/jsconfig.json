@@ -1,5 +1,5 @@
 {
-  "extends": "./pathconfig.json",
+  "extends": "./config/path-config.json",
   "compilerOptions": {
     /* Visit https://code.visualstudio.com/docs/languages/jsconfig to read more about this file */
 

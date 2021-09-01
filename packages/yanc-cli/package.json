@@ -8,42 +8,22 @@
     "yargs": "~17.1.1"
   },
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register ./_src/index.ts",
-    "dev:lib": "jest --watch ./_src/*",
-    "start": "node dist/index.js",
-    "dist": "yarn dist:clean && babel ./_src -x .js,.jsx,.ts,.tsx --out-dir ./dist --env-name production && ls -al ./dist",
-    "dist:clean": "rm -rf ./dist",
+    "dev": "node ./_yanc/run.js",
+    "start": "yanc",
     "lint": "eslint .",
     "lint:fix": "yarn lint --fix",
-    "test": "jest ./_src",
-    "all": "yarn test && yarn dev && yarn lint && yarn dist && yarn start && yarn dist:clean"
+    "test": "jest",
+    "dist": "babel ./_yanc --out-dir ./dist --env-name production",
+    "dist:clean": "rm -rf ./dist",
+    "gen": "yanc babel update"
   },
   "devDependencies": {
     "@babel/cli": "~7.14.8",
-    "@babel/core": "~7.14.0",
-    "@babel/eslint-parser": "~7.14.0",
-    "@babel/plugin-proposal-decorators": "~7.14.0",
-    "@babel/plugin-transform-runtime": "~7.14.0",
-    "@babel/plugin-transform-typescript": "~7.14.0",
-    "@babel/preset-env": "~7.14.0",
-    "@babel/preset-typescript": "~7.14.0",
-    "@types/jest": "~27.0.0",
-    "@types/node": "~16.7.0",
-    "@typescript-eslint/eslint-plugin": "~4.29.0",
-    "@typescript-eslint/parser": "~4.29.0",
-    "babel-jest": "~27.1.0",
-    "babel-plugin-module-resolver": "~4.1.0",
-    "eslint": "~7.26.0",
-    "eslint-config-prettier": "~8.3.0",
-    "eslint-import-resolver-babel-module": "~5.3.1",
-    "eslint-plugin-import": "~2.24.2",
-    "eslint-plugin-jest": "~24.4.0",
-    "eslint-plugin-json": "~3.1.0",
-    "eslint-plugin-prettier": "~3.4.0",
-    "jest": "~27.1.0",
-    "prettier": "~2.3.0",
-    "ts-node": "~10.2.0",
-    "tsconfig-paths": "~3.11.0",
-    "typescript": "~4.4.2"
+    "@yanc/env-babel": "*",
+    "eslint": "~7.32.0",
+    "jest": "~27.1.0"
+  },
+  "yanc": {
+    "verbose": true
   }
 }
