@@ -15,7 +15,8 @@
     "test": "jest",
     "dist": "babel ./_yanc --out-dir ./dist --env-name production",
     "dist:clean": "rm -rf ./dist",
-    "gen": "yanc babel update"
+    "gen": "yanc babel update",
+    "ver": "yarn version -i"
   },
   "devDependencies": {
     "@babel/cli": "~7.14.8",
