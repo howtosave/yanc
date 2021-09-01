@@ -4,4 +4,4 @@ import world from "~/lib/world";
 
 console.log(">>>", hello(), my(), world());
 // export libs
-export { hello, my, world };
+//export { hello, my, world };

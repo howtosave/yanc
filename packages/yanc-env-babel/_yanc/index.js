@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { spawn } = require("child_process");
+const { spawn, fork, exec } = require("child_process");
 const _ = require("lodash");
 
 var Module = require("module");
@@ -330,9 +330,101 @@ const babel = async (opts, args) => {
   return 0;
 };
 
+const _find_module_dir = (name, name2) => {
+  const mpaths = Module._nodeModulePaths(process.cwd());
+  for (const mpath of mpaths) {
+    const modPath = path.join(mpath, name);
+    if (fs.existsSync(modPath)) return modPath;
+  }
+  return "";
+};
+
+const _ensure_cache_dir = () => {
+  const cacheDir = path.join(
+    _find_module_dir("@yanc", "env-bable"),
+    "..",
+    ".cache",
+    "@yanc",
+    "env-bable"
+  );
+  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+  return cacheDir;
+};
+
+const _create_script_file = (input, opts) => {
+  const cacheDir = _ensure_cache_dir();
+  const fileName = `tmpScript@${Date.now()}.js`;
+  const scriptFile = path.join(cacheDir, fileName);
+  fs.writeFileSync(
+    scriptFile,
+    `require("@babel/register")({ extensions: [".js", ".ts"] }); require("${path.resolve(
+      path.join(opts.rootDir, input)
+    )}");`
+  );
+  // cleanup
+  fs.readdir(cacheDir, (err, files) => {
+    err ||
+      files.forEach(
+        (file) =>
+          file.startsWith("tmpScript@") &&
+          file !== fileName &&
+          fs.unlink(path.join(cacheDir, file), () => {})
+      );
+  });
+  return scriptFile;
+};
+
+// run scirpt
+const node = async (opts, args) => {
+  if (opts.verbose) {
+    console.log(">>> opts:", opts);
+    console.log(">>> args:", args);
+  }
+
+  if (args._.length > 0) {
+    // run script file
+    // remove script file arguement from args array
+    const scriptPath = _create_script_file(args._.shift(), opts);
+    const params = [..._argumentify(args, false)];
+    const options = {
+      cwd: opts.rootDir,
+    };
+
+    if (opts.verbose) {
+      console.log(">>> script file path:", scriptPath);
+      console.log(">>> params:", params);
+    }
+
+    const childProcess = fork(scriptPath, params, options);
+
+    childProcess.on(
+      "close",
+      (code) => code !== 0 && console.error(`node process exited with code ${code}`)
+    );
+    childProcess.on("error", (err) => console.error("!!! [yanc-env-babel:node]", err));
+  } else {
+    // run node
+    exec(
+      `node ${_argumentify(args).join(" ")}`,
+      {
+        cwd: opts.rootDir,
+      },
+      (error, stdout, stderr) => {
+        console.log(`${stdout}`);
+        console.error(`${stderr}`);
+        if (error) {
+          console.error(`!!! [yanc-env-babel]: ${error}`);
+        }
+      }
+    );
+  }
+  return 0;
+};
+
 module.exports = {
   export: _export,
   eslint,
   jest,
   babel,
+  node,
 };

@@ -3,15 +3,10 @@ const { babel: aliases } = require("./pathconfig.json");
 const useReact = false;
 
 module.exports = {
-  test: [
-    "**/*.js",
-    "**/*.ts",
-  ],
   presets: [
     [
       "@babel/preset-env",
       {
-        loose: true,
         targets: {
           node: "current",
         },
@@ -30,17 +25,12 @@ module.exports = {
     ],
   ],
   plugins: [
+    ["@babel/plugin-transform-runtime"],
     // path aliases using module-resolve
     ["babel-plugin-module-resolver", aliases],
     // make silence the "loose" warning
-    ["@babel/plugin-proposal-private-methods", { "loose": true }],
+    ["@babel/plugin-proposal-private-methods"],
   ],
-  parserOpts: {
-    sourceType: "module",
-  },
-  targets: {
-    node: "current",
-  },
   env: {
     development: {
       presets: [

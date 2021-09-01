@@ -8,7 +8,7 @@
     "yargs": "~17.1.1"
   },
   "scripts": {
-    "dev": "node ./_yanc/run.js",
+    "dev": "yanc babel node ./_yanc/run.js",
     "start": "yanc",
     "lint": "yanc babel eslint .",
     "lint:fix": "yarn lint --fix",
