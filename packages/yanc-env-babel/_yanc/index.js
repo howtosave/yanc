@@ -5,6 +5,10 @@ const _ = require("lodash");
 
 var Module = require("module");
 
+//
+// Util function for _export
+//
+
 const _update_eslint_config = (opts, { reset = false }) => {
   const remoteConfigToMerge =
     opts.envBabel && opts.envBabel.lintConfigFile
@@ -104,7 +108,12 @@ const _update_jest_config = (opts, { reset = false }) => {
   return configPath;
 };
 
-// run scirpt
+/**
+ * exports config files
+ *
+ * @param {*} opts yanc options
+ * @param {*} args arguments
+ */
 const _export = async (opts, args) => {
   if (opts.verbose) {
     console.log(">>> opts:", opts);
@@ -123,17 +132,8 @@ const _export = async (opts, args) => {
   return 0;
 };
 
-const _find_bin = (name) => {
-  const mpaths = Module._nodeModulePaths(process.cwd());
-  for (const mpath of mpaths) {
-    const binPath = path.join(mpath, ".bin", name);
-    if (fs.existsSync(binPath)) return binPath;
-  }
-  return "";
-};
-
 /**
- * convert object to argument string array
+ * convert object to string array for arguments input
  *
  * @param {object} args
  * @returns {string[]} argumentified array
@@ -152,6 +152,22 @@ const _argumentify = (args, useStringify = true) => {
   });
   //console.log(">>>>>>>>>>>>>>>>", arr, args["_"].map((i) => JSON.stringify(i)));
   return arr;
+};
+
+// ===========================
+// Util funcitons
+//
+
+const _find_bin = (name) => {
+  //
+  // TODO: find bin on yarn virtual env
+  //
+  const mpaths = Module._nodeModulePaths(process.cwd());
+  for (const mpath of mpaths) {
+    const binPath = path.join(mpath, ".bin", name);
+    if (fs.existsSync(binPath)) return binPath;
+  }
+  return "";
 };
 
 const _find_eslint_config = (opts) => {
@@ -178,6 +194,12 @@ const _find_babel_config = (opts) => {
   return remoteConfigFile;
 };
 
+/**
+ * run eslint process
+ *
+ * @param {*} opts yanc options
+ * @param {*} args arguments
+ */
 const eslint = async (opts, args) => {
   if (opts.verbose) {
     console.log(">>> opts:", opts);
@@ -185,6 +207,10 @@ const eslint = async (opts, args) => {
   }
 
   const binPath = _find_bin("eslint");
+  if (!binPath) {
+    console.error(`!!! not found eslint. set 'nodeLinker: node-modules' if using yarn`);
+    return -1;
+  }
   const configPath = _find_eslint_config(opts);
   const params = ["--no-eslintrc", "--config", configPath, ..._argumentify(args, false)];
   const options = {
@@ -212,12 +238,22 @@ const eslint = async (opts, args) => {
   return 0;
 };
 
+/**
+ * run jest process
+ *
+ * @param {*} opts yanc options
+ * @param {*} args arguments
+ */
 const jest = async (opts, args) => {
   if (opts.verbose) {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
   const binPath = _find_bin("jest");
+  if (!binPath) {
+    console.error(`!!! not found jest. set 'nodeLinker: node-modules' if using yarn`);
+    return -1;
+  }
   const configPath = _find_jest_config(opts);
   const params = [
     "--config",
@@ -252,12 +288,22 @@ const jest = async (opts, args) => {
   return 0;
 };
 
+/**
+ * run babel process
+ *
+ * @param {*} opts yanc options
+ * @param {*} args arguments
+ */
 const babel = async (opts, args) => {
   if (opts.verbose) {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
   const binPath = _find_bin("babel");
+  if (!binPath) {
+    console.error(`!!! not found babel. set 'nodeLinker: node-modules' if using yarn`);
+    return -1;
+  }
   const configPath = _find_babel_config(opts);
   const params = ["--config-file", configPath, ..._argumentify(args, false)];
   const options = {
