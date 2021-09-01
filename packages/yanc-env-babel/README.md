@@ -4,7 +4,7 @@
 
 ```sh
 # this package
-yarn add -D @yanc/env-babel@"github:aistyler/yanc#workspace=@yanc/env-babel&semver:~1.0.0"
+yarn add -D @yanc/env-babel@"github:aistyler/yanc#workspace=@yanc/env-babel&semver:^1.0.0"
 # dependency packages
 yarn add -D @babel/cli eslint jest
 ```

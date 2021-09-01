@@ -1,3 +1,7 @@
+//
+// cli.js
+//
+
 const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");

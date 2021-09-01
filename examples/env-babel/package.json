@@ -3,9 +3,14 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "dev": "yanc babel node ./src/index.js",
-    "test": "yanc babel test",
-    "lint": "yanc babel lint ."
+    "dev": "yanc babel exec ./src/index.ts",
+    "lint": "yanc babel lint .",
+    "lint:fix": "yarn lint --fix",
+    "test": "yanc babel test .",
+    "dist": "yanc babel build ./src --out-dir ./dist --env-name production",
+    "dist:clean": "rm -rf ./dist",
+    "conf": "yanc babel configure",
+    "conf:reset": "yanc babel configure --reset"
   },
   "dependencies": {
     "camel-case": "~4.1.2"
@@ -13,13 +18,6 @@
   "devDependencies": {
     "@yanc/cli": "*",
     "@yanc/env-babel": "*"
-  },
-  "yanc": {
-    "configDir": "./config",
-    "verbose": true,
-    "envBabel": {
-      "configName": ".babelrc"
-    }
   },
   "license": "MIT"
 }

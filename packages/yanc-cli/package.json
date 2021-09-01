@@ -1,6 +1,6 @@
 {
   "name": "@yanc/cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "bin": {
     "yanc": "bin/yanc.js"
   },
@@ -8,21 +8,18 @@
     "yargs": "~17.1.1"
   },
   "scripts": {
-    "dev": "yanc babel node ./_yanc/run.js",
-    "start": "yanc",
-    "lint": "yanc babel eslint .",
+    "dev": "yanc babel exec ./src/cli.js",
+    "lint": "yanc babel lint .",
     "lint:fix": "yarn lint --fix",
-    "test": "yanc babel jest .",
-    "dist": "yanc babel babel ./_yanc --out-dir ./dist --env-name production",
+    "test": "yanc babel test .",
+    "dist": "yanc babel build ./src --out-dir ./dist --env-name production",
     "dist:clean": "rm -rf ./dist",
-    "yanc:export": "yanc babel export",
+    "conf": "yanc babel configure",
+    "conf:reset": "yanc babel configure --reset",
     "ver": "yarn version -i"
   },
   "devDependencies": {
-    "@babel/cli": "~7.14.8",
-    "@yanc/env-babel": "*",
-    "eslint": "~7.32.0",
-    "jest": "~27.1.0"
+    "@yanc/env-babel": "*"
   },
   "yanc": {
     "verbose": true

@@ -474,9 +474,14 @@ const node = async (opts, args) => {
 };
 
 module.exports = {
-  export: _export,
   eslint,
   jest,
   babel,
   node,
+  lint: eslint,
+  test: jest,
+  build: babel,
+  exec: node,
+  export: _export,
+  configure: _export,
 };
