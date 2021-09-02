@@ -13,7 +13,6 @@ This package will be work only under yarn berry `node-modules` mode.
 ### use yarn berry
 
 ```sh
-# use yarn berry
 yarn set version berry
 echo "nodeLinker: node-modules" >> .yarnrc.yml
 ```
@@ -21,8 +20,6 @@ echo "nodeLinker: node-modules" >> .yarnrc.yml
 ### configure package.json
 
 ```json
-"yanc": {
-},
 "scripts": {
   "dev": "yanc babel exec ./src/index.ts",
   "test": "yanc babel test .",

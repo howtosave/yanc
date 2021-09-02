@@ -3,22 +3,22 @@
     "baseUrl": ".",
     "paths": {
       "~/src/*": [
-        "./_src/*"
+        "./src/*"
       ],
       "~/lib/*": [
-        "./_src/lib/*"
+        "./src/lib/*"
       ]
     }
   },
   "babel": {
     "root": ".",
     "alias": {
-      "~/src": "./_src",
-      "~/lib": "./_src/lib"
+      "~/src": "./src",
+      "~/lib": "./src/lib"
     }
   },
   "jest": {
-    "^~/src/(.*)$": "<rootDir>/_src/$1",
-    "^~/lib/(.*)$": "<rootDir>/_src/lib/$1"
+    "^~/src/(.*)$": "<rootDir>/src/$1",
+    "^~/lib/(.*)$": "<rootDir>/src/lib/$1"
   }
 }

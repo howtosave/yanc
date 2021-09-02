@@ -1,5 +1,12 @@
 {
   "root": true,
+  "ignorePatterns": [
+    "/build",
+    "/dist",
+    "/.cache",
+    "deprecated",
+    "/.yarn"
+  ],
   "env": {
     "browser": false,
     "commonjs": true,

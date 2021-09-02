@@ -1,13 +1,8 @@
 {
-  "test": [
-    "**/*.js",
-    "**/*.ts"
-  ],
   "presets": [
     [
       "@babel/preset-env",
       {
-        "loose": true,
         "targets": {
           "node": "current"
         }
@@ -26,28 +21,28 @@
   ],
   "plugins": [
     [
+      "@babel/plugin-transform-runtime"
+    ],
+    [
       "babel-plugin-module-resolver",
       {
         "root": ".",
         "alias": {
-          "~/src": "./_src",
-          "~/lib": "./_src/lib"
+          "~/src": "./src",
+          "~/lib": "./src/lib"
         }
       }
     ],
     [
-      "@babel/plugin-proposal-private-methods",
-      {
-        "loose": true
-      }
+      "@babel/plugin-proposal-private-methods"
+    ],
+    [
+      "@babel/plugin-proposal-class-properties"
+    ],
+    [
+      "@babel/plugin-transform-typescript"
     ]
   ],
-  "parserOpts": {
-    "sourceType": "module"
-  },
-  "targets": {
-    "node": "current"
-  },
   "env": {
     "development": {
       "presets": []
