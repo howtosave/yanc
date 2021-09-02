@@ -30,6 +30,8 @@ module.exports = {
     ["babel-plugin-module-resolver", aliases],
     // make silence the "loose" warning
     ["@babel/plugin-proposal-private-methods"],
+    ["@babel/plugin-proposal-class-properties"],
+    ["@babel/plugin-transform-typescript"],
   ],
   env: {
     development: {

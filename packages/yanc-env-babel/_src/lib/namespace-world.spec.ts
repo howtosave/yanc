@@ -1,6 +1,6 @@
-import world from "./world";
+import world from "./namespace-world";
 
-describe("# module static world", () => {
+describe("# namespace static world", () => {
   it("## static world", () => {
     expect(world()).toMatch(/static world/);
   });

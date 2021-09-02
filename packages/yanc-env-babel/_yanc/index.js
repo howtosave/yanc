@@ -180,7 +180,6 @@ const _export = async (opts, args) => {
   const jsConfigPath = _update_json_config("jsconfig.json", opts, args, true);
   console.log(">>> [yanc-env-babel] updated jsconfig config file:", jsConfigPath);
 
-
   return 0;
 };
 
