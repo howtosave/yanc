@@ -245,6 +245,8 @@ const _find_babel_config = (opts) => {
   return remoteConfigFile;
 };
 
+const _ensure_babel_config = (opts) => _find_babel_config(opts);
+
 /**
  * run eslint process
  *
@@ -431,6 +433,9 @@ const node = async (opts, args) => {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
+
+  // babel config file should be located in the remote root directory
+  _ensure_babel_config(opts);
 
   if (args._.length > 0) {
     // run script file
