@@ -113,31 +113,34 @@ const _update_jest_config = (opts, { reset = false }) => {
 const _update_json_config = (jsonFile, opts, { reset = false }, isJson5 = false) => {
   const remoteConfigToMerge = path.resolve(path.join(opts.rootDir, jsonFile));
 
-  let configPath;
   let config;
-  if (!reset && fs.existsSync(remoteConfigToMerge)) {
-    if (isJson5) {
-      // TODO load json5
-      config = fs.readFileSync(path.resolve(path.join(localRootDir, jsonFile)), "utf-8");
-    } else {
-      config = _.mergeWith(
-        require(remoteConfigToMerge), // remote, obj
-        require(`../${jsonFile}`), // local, src
-        (objVal, srcVal, key, object) => {
-          if (objVal === undefined) {
-            // skip when no key on remote's
-            _.unset(object, key);
-          } else if (objVal !== srcVal) {
-            // use remote's value
-            return objVal;
-          }
-        }
-      );
-    }
+  if (isJson5) {
+    // TODO load json5
+    config = fs.readFileSync(path.resolve(path.join(localRootDir, jsonFile)), "utf-8");
   } else {
-    config = require(`../${jsonFile}`);
+    if (!reset && fs.existsSync(remoteConfigToMerge)) {
+      if (isJson5) {
+      } else {
+        config = _.mergeWith(
+          require(remoteConfigToMerge), // remote, obj
+          require(`../${jsonFile}`), // local, src
+          (objVal, srcVal, key, object) => {
+            if (objVal === undefined) {
+              // skip when no key on remote's
+              _.unset(object, key);
+            } else if (objVal !== srcVal) {
+              // use remote's value
+              return objVal;
+            }
+          }
+        );
+      }
+    } else {
+      config = require(`../${jsonFile}`);
+    }
   }
-  configPath = path.join(opts.rootDir, jsonFile);
+
+  const configPath = path.join(opts.rootDir, jsonFile);
   fs.writeFileSync(
     configPath,
     typeof config === "object" ? JSON.stringify(config, null, 2) : config
