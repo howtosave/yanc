@@ -1,7 +1,6 @@
 // eslint.config.js
 // off: 0, warn: 1, error: 2
 
-
 //
 // prettier config
 const prettierConfig = {

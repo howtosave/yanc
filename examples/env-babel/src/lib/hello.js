@@ -1,2 +1,3 @@
-const { camelCase } = require("camel-case");
-module.exports = camelCase("hello-world");
+// es5 module
+
+module.exports = () => "hello";
