@@ -11,7 +11,7 @@ Node configuration using typescript
 
 ```sh
 # this package
-yarn add -D @yanc/env-babel@"github:aistyler/yanc#workspace=@yanc/env-babel&semver:^1.0.0"
+yarn add -D @yanc/env-typescript@"github:aistyler/yanc#workspace=@yanc/env-typescript&semver:^1.0.0"
 # dependency packages
 yarn add -D @yanc/cli@"github:aistyler/yanc#workspace=@yanc/cli&sermver:^1.0.0"
 ```
@@ -20,17 +20,21 @@ yarn add -D @yanc/cli@"github:aistyler/yanc#workspace=@yanc/cli&sermver:^1.0.0"
 
 ```json
 "scripts": {
-  "dev": "yanc babel exec ./src/index.js",
-  "lint": "yanc babel lint .",
+  "dev": "yanc typescript tsc --build && node ./.cache/index.js",
+  "dev:watch": "nodemon --watch ./src --ext js,ts --delay 1000ms --exec 'yarn dev'",
+  "test": "echo 'NOT SUPPORTED'",
+  "lint": "yanc typescript lint .",
   "lint:fix": "yarn lint --fix",
-  "test": "yanc babel test ./src",
-  "dist": "yanc babel build ./src --out-dir ./dist --env-name production",
-  "dist:clean": "rm -rf ./dist",
-  "conf": "yanc babel configure",
-  "conf:reset": "yanc babel configure --reset",
+  "dist": "yanc typescript tsc -p ./tsconfig.production.json && yarn dist:type",
+  "dist:type": "yanc typescript tsc --declaration --emitDeclarationOnly --outFile ./dist/types.d.ts -p ./tsconfig.production.json",
+  "clean": "rm -rf ./dist ./.cache",
+  "start": "node ./dist/index.js",
+  "conf": "yanc typescript configure",
+  "conf:reset": "yanc typescript configure --reset"
 }
 "devDependencies": {
   "@yanc/cli": "github:aistyler/yanc#workspace=@yanc/cli&sermver:^1.0.0",
-  "@yanc/env-babel": "github:aistyler/yanc#workspace=@yanc/env-babel&semver:^1.0.0"
+  "@yanc/env-typescript": "github:aistyler/yanc#workspace=@yanc/env-typescript&semver:^1.0.0",
+  "nodemon": "~2.0.12"
 }
 ```

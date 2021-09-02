@@ -253,8 +253,6 @@ const tsc = async (opts, args) => {
   return 0;
 };
 
-
-
 module.exports = {
   eslint,
   lint: eslint,

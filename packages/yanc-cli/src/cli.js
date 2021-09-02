@@ -10,8 +10,8 @@ const options = {};
 
 const harg = yargs(hideBin(process.argv));
 const argv = harg
-  .usage("Usage: $0 <env> <command> [options]")
-  .example("$0 babel test", "")
+  .usage("Usage: yanc <env> <command> [options]")
+  .example("yanc babel test", "")
   .options(options)
   .demandCommand(2)
   // see https://github.com/yargs/yargs-parser#configuration

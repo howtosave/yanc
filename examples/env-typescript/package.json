@@ -7,7 +7,7 @@
     "dev:watch": "nodemon --watch ./src --ext js,ts --delay 1000ms --exec 'yarn dev'",
     "test": "echo 'NOT SUPPORTED'; yanc typescript test .",
     "lint": "yanc typescript lint .",
-    "lint:fix": "yarn typescript --fix",
+    "lint:fix": "yarn lint --fix",
     "dist": "yanc typescript tsc -p ./tsconfig.production.json && yarn dist:type",
     "dist:type": "yanc typescript tsc --declaration --emitDeclarationOnly --outFile ./dist/types.d.ts -p ./tsconfig.production.json",
     "clean": "rm -rf ./dist ./.cache",
