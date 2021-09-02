@@ -4,12 +4,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "yanc babel exec ./src/index.ts",
+    "test": "yanc babel test .",
+    "lint": "yanc babel lint .",
+    "lint:fix": "yarn lint --fix",
     "dist": "yanc babel build ./src -x .js,.ts --out-dir ./dist --env-name production",
     "dist:clean": "rm -rf ./dist",
     "start": "node ./dist/index.js",
-    "lint": "yanc babel lint .",
-    "lint:fix": "yarn lint --fix",
-    "test": "yanc babel test .",
     "conf": "yanc babel configure",
     "conf:reset": "yanc babel configure --reset"
   },
