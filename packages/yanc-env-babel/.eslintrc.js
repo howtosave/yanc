@@ -213,6 +213,7 @@ module.exports = {
   // do not use parent's props
   root: true,
 
+  ignorePatterns: ["/build", "/dist", "/.cache", "deprecated", "/.yarn"],
   // javascript
   ..._config_js,
 

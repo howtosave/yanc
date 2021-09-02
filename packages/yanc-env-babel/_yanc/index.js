@@ -11,13 +11,72 @@ const localRootDir = path.join(__dirname, "..");
 // Util function for _export
 //
 
-const _update_eslint_config = (opts, { reset = false }) => {
+const _update_json_config = (
+  jsonFile,
+  opts,
+  { reset = false },
+  skipIfExisting = false,
+  isJson5 = false
+) => {
+  const remoteConfigToMerge = path.resolve(path.join(opts.rootDir, jsonFile));
+  if (skipIfExisting && fs.existsSync(remoteConfigToMerge)) return remoteConfigToMerge;
+
+  let config;
+  if (isJson5) {
+    //
+    // TODO: merge json5
+    //
+    config = fs.readFileSync(path.resolve(path.join(localRootDir, jsonFile)), "utf-8");
+  } else {
+    if (!reset && fs.existsSync(remoteConfigToMerge)) {
+      if (isJson5) {
+      } else {
+        config = _.mergeWith(
+          require(remoteConfigToMerge), // remote, obj
+          require(`../${jsonFile}`), // local, src
+          (objVal, srcVal, key, object) => {
+            if (objVal === undefined) {
+              // skip when no key on remote's
+              _.unset(object, key);
+            } else if (objVal !== srcVal) {
+              // use remote's value
+              return objVal;
+            }
+          }
+        );
+      }
+    } else {
+      config = require(`../${jsonFile}`);
+    }
+  }
+
+  const configPath = remoteConfigToMerge;
+  fs.writeFileSync(
+    configPath,
+    typeof config === "object" ? JSON.stringify(config, null, 2) : config
+  );
+
+  return configPath;
+};
+
+const _update_base_config = (opts, args, skipIfExisting = false) => {
+  _update_json_config("pathconfig.json", opts, args, skipIfExisting, false);
+  _update_json_config("tsconfig.json", opts, args, skipIfExisting, true);
+  _update_json_config("jsconfig.json", opts, args, skipIfExisting, true);
+  return true;
+};
+
+const _ensure_base_config = (opts) => _update_base_config(opts, {}, true);
+
+const _update_eslint_config = (opts, { reset = false }, skipIfExisting = false) => {
+  const outputConfigPath = path.resolve(path.join(opts.rootDir, ".eslintrc.json"));
+  if (skipIfExisting && fs.existsSync(outputConfigPath)) return outputConfigPath;
+
   const remoteConfigToMerge =
     opts.envBabel && opts.envBabel.lintConfigFile
       ? path.resolve(path.join(opts.rootDir, opts.envBabel.lintConfigFile))
-      : path.resolve(path.join(opts.rootDir, ".eslintrc.json"));
+      : outputConfigPath;
 
-  let configPath;
   let config;
   if (!reset && fs.existsSync(remoteConfigToMerge)) {
     config = _.mergeWith(
@@ -36,19 +95,24 @@ const _update_eslint_config = (opts, { reset = false }) => {
   } else {
     config = require("../.eslintrc");
   }
-  configPath = path.join(opts.rootDir, ".eslintrc.json");
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
-  return configPath;
+  fs.writeFileSync(outputConfigPath, JSON.stringify(config, null, 2));
+
+  return outputConfigPath;
 };
 
-const _update_babel_config = (opts, { reset = false }) => {
+const _ensure_eslint_config = (opts) =>
+  _ensure_base_config(opts) && _update_eslint_config(opts, {}, true);
+
+const _update_babel_config = (opts, { reset = false }, skipIfExisting = false) => {
+  const outputConfigPath = path.resolve(path.join(opts.rootDir, ".babelrc.json"));
+  if (skipIfExisting && fs.existsSync(outputConfigPath)) return outputConfigPath;
+
   const remoteConfigToMerge =
     opts.envBabel && opts.envBabel.babelConfigFile
       ? path.resolve(path.join(opts.rootDir, opts.envBabel.babelConfigFile))
-      : path.resolve(path.join(opts.rootDir, ".babelrc.json"));
+      : outputConfigPath;
 
-  let configPath;
   let config;
   if (!reset && fs.existsSync(remoteConfigToMerge)) {
     config = _.mergeWith(
@@ -67,19 +131,24 @@ const _update_babel_config = (opts, { reset = false }) => {
   } else {
     config = require("../.babelrc");
   }
-  configPath = path.join(opts.rootDir, ".babelrc.json");
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
-  return configPath;
+  fs.writeFileSync(outputConfigPath, JSON.stringify(config, null, 2));
+
+  return outputConfigPath;
 };
 
-const _update_jest_config = (opts, { reset = false }) => {
+const _ensure_babel_config = (opts) =>
+  _ensure_base_config(opts) && _update_babel_config(opts, {}, true);
+
+const _update_jest_config = (opts, { reset = false }, skipIfExisting = false) => {
+  const outputConfigPath = path.resolve(path.join(opts.rootDir, "jest.config.js"));
+  if (skipIfExisting && fs.existsSync(outputConfigPath)) return outputConfigPath;
+
   const remoteConfigToMerge =
     opts.envBabel && opts.envBabel.jestConfigFile
       ? path.resolve(path.join(opts.rootDir, opts.envBabel.jestConfigFile))
-      : path.resolve(path.join(opts.rootDir, "jest.config.js"));
+      : outputConfigPath;
 
-  let configPath;
   let config;
   if (!reset && fs.existsSync(remoteConfigToMerge)) {
     const remote = JSON.parse(JSON.stringify(require(remoteConfigToMerge)));
@@ -105,49 +174,13 @@ const _update_jest_config = (opts, { reset = false }) => {
   } else {
     config = require("../jest.config");
   }
-  configPath = path.join(opts.rootDir, "jest.config.js");
-  fs.writeFileSync(configPath, `module.exports = ${JSON.stringify(config, null, 2)};\n`);
-  return configPath;
+
+  fs.writeFileSync(outputConfigPath, `module.exports = ${JSON.stringify(config, null, 2)};\n`);
+  return outputConfigPath;
 };
 
-const _update_json_config = (jsonFile, opts, { reset = false }, isJson5 = false) => {
-  const remoteConfigToMerge = path.resolve(path.join(opts.rootDir, jsonFile));
-
-  let config;
-  if (isJson5) {
-    // TODO load json5
-    config = fs.readFileSync(path.resolve(path.join(localRootDir, jsonFile)), "utf-8");
-  } else {
-    if (!reset && fs.existsSync(remoteConfigToMerge)) {
-      if (isJson5) {
-      } else {
-        config = _.mergeWith(
-          require(remoteConfigToMerge), // remote, obj
-          require(`../${jsonFile}`), // local, src
-          (objVal, srcVal, key, object) => {
-            if (objVal === undefined) {
-              // skip when no key on remote's
-              _.unset(object, key);
-            } else if (objVal !== srcVal) {
-              // use remote's value
-              return objVal;
-            }
-          }
-        );
-      }
-    } else {
-      config = require(`../${jsonFile}`);
-    }
-  }
-
-  const configPath = path.join(opts.rootDir, jsonFile);
-  fs.writeFileSync(
-    configPath,
-    typeof config === "object" ? JSON.stringify(config, null, 2) : config
-  );
-
-  return configPath;
-};
+const _ensure_jest_config = (opts) =>
+  _ensure_base_config(opts) && _update_jest_config(opts, {}, true);
 
 /**
  * exports config files
@@ -161,6 +194,9 @@ const _export = async (opts, args) => {
     console.log(">>> args:", args);
   }
 
+  _update_base_config(opts, args);
+  console.log(">>> [yanc-env-babel] updated base config files");
+
   const lintConfigPath = _update_eslint_config(opts, args);
   console.log(">>> [yanc-env-babel] updated lint config file:", lintConfigPath);
 
@@ -169,19 +205,6 @@ const _export = async (opts, args) => {
 
   const babelConfigPath = _update_babel_config(opts, args);
   console.log(">>> [yanc-env-babel] updated babel config file:", babelConfigPath);
-
-  const pathConfigPath = _update_json_config("pathconfig.json", opts, args);
-  console.log(">>> [yanc-env-babel] updated pathconfig config file:", pathConfigPath);
-
-  //
-  // TODO: merge json5
-  //
-
-  const tsConfigPath = _update_json_config("tsconfig.json", opts, args, true);
-  console.log(">>> [yanc-env-babel] updated tsconfig config file:", tsConfigPath);
-
-  const jsConfigPath = _update_json_config("jsconfig.json", opts, args, true);
-  console.log(">>> [yanc-env-babel] updated jsconfig config file:", jsConfigPath);
 
   return 0;
 };
@@ -195,12 +218,13 @@ const _export = async (opts, args) => {
 const _argumentify = (args, useStringify = true) => {
   const arr = [];
   Object.keys(args).forEach((e) => {
-    // TODO:
-    // How to know whether the arg prefix is '-' or '--'
     if (e === "_") {
       arr.push(...(useStringify ? args[e].map((i) => JSON.stringify(i)) : args[e]));
     } else {
-      arr.push(`--${e}`);
+      // TODO:
+      // How to know whether the arg prefix is '-' or '--'
+      // Assume if the length of arg name is 1 then the prefix is '-', otherwise '--'
+      arr.push(e.length === 1 ? `-${e}` : `--${e}`);
       if (typeof args[e] !== "boolean") arr.push(useStringify ? JSON.stringify(args[e]) : args[e]);
     }
   });
@@ -224,32 +248,6 @@ const _find_bin = (name) => {
   return "";
 };
 
-const _find_eslint_config = (opts) => {
-  const remoteConfigFile = path.resolve(path.join(opts.rootDir, ".eslintrc.json"));
-  if (!fs.existsSync(remoteConfigFile)) {
-    _update_eslint_config(opts, {});
-  }
-  return remoteConfigFile;
-};
-
-const _find_jest_config = (opts) => {
-  const remoteConfigFile = path.resolve(path.join(opts.rootDir, "jest.config.js"));
-  if (!fs.existsSync(remoteConfigFile)) {
-    _update_jest_config(opts, {});
-  }
-  return remoteConfigFile;
-};
-
-const _find_babel_config = (opts) => {
-  const remoteConfigFile = path.resolve(path.join(opts.rootDir, ".babelrc.json"));
-  if (!fs.existsSync(remoteConfigFile)) {
-    _update_babel_config(opts, {});
-  }
-  return remoteConfigFile;
-};
-
-const _ensure_babel_config = (opts) => _find_babel_config(opts);
-
 /**
  * run eslint process
  *
@@ -267,7 +265,7 @@ const eslint = async (opts, args) => {
     console.error(`!!! not found eslint. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _find_eslint_config(opts);
+  const configPath = _ensure_eslint_config(opts);
   const params = ["--no-eslintrc", "--config", configPath, ..._argumentify(args, false)];
   const options = {
     cwd: opts.rootDir,
@@ -310,7 +308,7 @@ const jest = async (opts, args) => {
     console.error(`!!! not found jest. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _find_jest_config(opts);
+  const configPath = _ensure_jest_config(opts);
   const params = [
     "--config",
     configPath,
@@ -360,7 +358,7 @@ const babel = async (opts, args) => {
     console.error(`!!! not found babel. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _find_babel_config(opts);
+  const configPath = _ensure_babel_config(opts);
   const params = ["--config-file", configPath, ..._argumentify(args, false)];
   const options = {
     cwd: opts.rootDir,

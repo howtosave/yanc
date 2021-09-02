@@ -18,8 +18,8 @@
     ".babelrc.js",
     ".eslintrc.js",
     "jest.config.js",
-    "pathconfig.json",
     "jsconfig.json",
+    "pathconfig.json",
     "tsconfig.json"
   ],
   "dependencies": {
