@@ -28,7 +28,7 @@ yarn yanc babel build
 yarn yanc babel node index.ts
 
 # export config files
-yarn yanc babel export
+yarn yanc babel configure
 
 # dependency packages
 yarn add -D @babel/cli eslint jest
@@ -41,5 +41,20 @@ yarn add -D @babel/cli eslint jest
 ```json
 "yanc": {
   "verbose": false
+}
+```
+
+## scripts in package.json
+
+```json
+"scripts": {
+  "dev": "yanc babel exec ./src/index.js",
+  "lint": "yanc babel lint .",
+  "lint:fix": "yarn lint --fix",
+  "test": "yanc babel test ./src",
+  "dist": "yanc babel build ./src --out-dir ./dist --env-name production",
+  "dist:clean": "rm -rf ./dist",
+  "conf": "yanc babel configure",
+  "conf:reset": "yanc babel configure --reset",
 }
 ```
