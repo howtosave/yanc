@@ -38,6 +38,6 @@ module.exports = {
     }
   },
   ignore: [
-    "./dist*", "**/*.d.ts",
+    "./dist", "./dist-*", "**/*.d.ts",
   ],
 };

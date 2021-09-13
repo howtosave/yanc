@@ -5,6 +5,7 @@
     "yanc": "bin/yanc.js"
   },
   "dependencies": {
+    "@babel/runtime-corejs3": "~7.15.4",
     "yargs": "~17.1.1"
   },
   "scripts": {

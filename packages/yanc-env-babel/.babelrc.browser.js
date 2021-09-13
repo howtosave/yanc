@@ -1,10 +1,21 @@
 const { babel: aliases } = require("./pathconfig.json");
 
 const presetEnvOptions = {
-  targets: "> 0.25%, not dead",
+  targets:
+  //"> 0.25%, not dead", OR
+  {
+    browsers: [
+      "edge >= 16",
+      "safari >= 9",
+      "firefox >= 57",
+      "ie >= 11",
+      "ios >= 9",
+      "chrome >= 49"
+    ],
+  },
   useBuiltIns: "usage", 
   corejs: {
-    version: "^3.17.0", 
+    version: 3, 
     proposals: true,
   },
 };
@@ -25,7 +36,14 @@ module.exports = {
     ],
   ],
   plugins: [
-    ["@babel/plugin-transform-runtime"],
+    // use this plugin ...
+    // to reuse code in @babel/runtime and reduce the size of code
+    // to create a sandboxed environment and prevent pollution of the global scope
+    ["@babel/plugin-transform-runtime", { 
+      absoluteRuntime: false,
+      corejs: presetEnvOptions.corejs,
+      version: "^7.15.4",
+    }],
     // path aliases using module-resolve
     ["babel-plugin-module-resolver", aliases],
     // make silence the "loose" warning
@@ -43,6 +61,6 @@ module.exports = {
     }
   },
   ignore: [
-    "./dist*", "**/*.d.ts",
+    "./dist", "./dist-*", "**/*.d.ts",
   ],
 };
