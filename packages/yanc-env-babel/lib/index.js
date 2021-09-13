@@ -369,6 +369,7 @@ const babel = async (opts, args) => {
   const hasConfigArg = Object.keys(args).find((e) => e === "config-file");
   const params = [
     ...(hasConfigArg ? [] : ["--config-file", configPaths[0]]),
+    "--no-babelrc",
     ..._argumentify(args, false),
   ];
   const options = {
