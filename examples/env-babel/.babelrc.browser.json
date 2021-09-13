@@ -3,13 +3,21 @@
     [
       "@babel/preset-env",
       {
-        "targets": "> 0.25%, not dead",
+        "targets": {
+          "browsers": [
+            "edge >= 16",
+            "safari >= 9",
+            "firefox >= 57",
+            "ie >= 11",
+            "ios >= 9",
+            "chrome >= 49"
+          ]
+        },
         "useBuiltIns": "usage",
         "corejs": {
           "version": 3,
           "proposals": true
-        },
-        "debug": true
+        }
       }
     ],
     [
@@ -25,10 +33,15 @@
   ],
   "plugins": [
     [
-      "@babel/plugin-transform-runtime", { "corejs": {
-        "version": 3,
-        "proposals": true
-      } }
+      "@babel/plugin-transform-runtime",
+      {
+        "absoluteRuntime": false,
+        "corejs": {
+          "version": 3,
+          "proposals": true
+        },
+        "version": "^7.15.4"
+      }
     ],
     [
       "babel-plugin-module-resolver",
@@ -60,7 +73,8 @@
     }
   },
   "ignore": [
-    "./dist*",
+    "./dist",
+    "./dist-*",
     "**/*.d.ts"
   ]
 }

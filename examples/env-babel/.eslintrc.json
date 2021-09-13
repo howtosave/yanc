@@ -3,7 +3,7 @@
   "ignorePatterns": [
     "/build",
     "/dist",
-    "/dist-web",
+    "dist-*",
     "/.cache",
     "deprecated",
     "/.yarn"

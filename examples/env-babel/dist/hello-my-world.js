@@ -32,5 +32,4 @@ var _world = _interopRequireDefault(require("./lib/world"));
 
 var _namespaceWorld = _interopRequireDefault(require("./lib/namespace-world"));
 
-const sym = Symbol();
-console.log(">>>", (0, _hello.default)(), (0, _my.default)(), (0, _world.default)(), (0, _namespaceWorld.default)(), sym.toString());
+console.log(">>>", (0, _hello.default)(), (0, _my.default)(), (0, _world.default)(), (0, _namespaceWorld.default)());

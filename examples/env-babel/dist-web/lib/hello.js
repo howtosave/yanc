@@ -1,3 +1,5 @@
 "use strict";
 
-module.exports = () => "hello";
+module.exports = function () {
+  return "hello";
+};

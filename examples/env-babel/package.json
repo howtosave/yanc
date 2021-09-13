@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "yanc babel exec ./src/index.ts",
-    "test": "yanc babel test .",
-    "test2": "yanc babel test -c ./jest.config.js .",
+    "test": "yanc babel test",
+    "test2": "yanc babel test -c ./jest.config.js",
     "lint": "yanc babel lint .",
     "lint2": "yanc babel lint -c ./.eslintrc.json .",
     "lint:fix": "yarn lint --fix",

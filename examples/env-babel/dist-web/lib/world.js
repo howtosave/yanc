@@ -1,42 +1,66 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js/object/define-property");
 
-Object.defineProperty(exports, "__esModule", {
+var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault").default;
+
+_Object$defineProperty(exports, "__esModule", {
   value: true
 });
+
 exports.default = void 0;
 
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+require("core-js/modules/es.function.name.js");
 
-class StaticWorld {
-  constructor() {
+var _concat = _interopRequireDefault(require("@babel/runtime-corejs3/core-js/instance/concat"));
+
+var _stringify = _interopRequireDefault(require("@babel/runtime-corejs3/core-js/json/stringify"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime-corejs3/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime-corejs3/helpers/createClass"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime-corejs3/helpers/defineProperty"));
+
+var StaticWorld = function () {
+  function StaticWorld() {
+    (0, _classCallCheck2.default)(this, StaticWorld);
     (0, _defineProperty2.default)(this, "name", "static world");
   }
 
-  get message() {
-    return `${this.name}:${JSON.stringify(this.spacetime())}`;
-  }
+  (0, _createClass2.default)(StaticWorld, [{
+    key: "message",
+    get: function get() {
+      var _context;
 
-  time() {
-    return 0xff;
-  }
+      return (0, _concat.default)(_context = "".concat(this.name, ":")).call(_context, (0, _stringify.default)(this.spacetime()));
+    }
+  }, {
+    key: "time",
+    value: function time() {
+      return 0xff;
+    }
+  }, {
+    key: "space",
+    value: function space() {
+      return 0xff;
+    }
+  }, {
+    key: "spacetime",
+    value: function spacetime() {
+      return {
+        space: this.space(),
+        time: this.time()
+      };
+    }
+  }]);
+  return StaticWorld;
+}();
 
-  space() {
-    return 0xff;
-  }
+var world = new StaticWorld();
 
-  spacetime() {
-    return {
-      space: this.space(),
-      time: this.time()
-    };
-  }
-
-}
-
-const world = new StaticWorld();
-
-var _default = () => world.message;
+var _default = function _default() {
+  return world.message;
+};
 
 exports.default = _default;

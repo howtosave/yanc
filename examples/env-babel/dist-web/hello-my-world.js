@@ -1,25 +1,30 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js/object/define-property");
 
-Object.defineProperty(exports, "__esModule", {
+var _interopRequireDefault = require("@babel/runtime-corejs3/helpers/interopRequireDefault").default;
+
+_Object$defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "hello", {
+
+_Object$defineProperty(exports, "hello", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _hello.default;
   }
 });
-Object.defineProperty(exports, "my", {
+
+_Object$defineProperty(exports, "my", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _my.default;
   }
 });
-Object.defineProperty(exports, "world", {
+
+_Object$defineProperty(exports, "world", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return _world.default;
   }
 });
