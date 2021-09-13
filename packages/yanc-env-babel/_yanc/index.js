@@ -266,7 +266,12 @@ const eslint = async (opts, args) => {
     return -1;
   }
   const configPath = _ensure_eslint_config(opts);
-  const params = ["--no-eslintrc", "--config", configPath, ..._argumentify(args, false)];
+  const hasConfigArg = Object.keys(args).find((e) => e === "config" || e === "c");
+  const params = [
+    ...(hasConfigArg ? [] : ["--config", configPath]),
+    "--no-eslintrc",
+    ..._argumentify(args, false),
+  ];
   const options = {
     cwd: opts.rootDir,
     env: { ...process.env, FORCE_COLOR: "1" },
@@ -309,9 +314,9 @@ const jest = async (opts, args) => {
     return -1;
   }
   const configPath = _ensure_jest_config(opts);
+  const hasConfigArg = Object.keys(args).find((e) => e === "config" || e === "c");
   const params = [
-    "--config",
-    configPath,
+    ...(hasConfigArg ? [] : ["--config", configPath]),
     "--rootDir",
     `${opts.rootDir}`,
     "--roots",
@@ -359,7 +364,11 @@ const babel = async (opts, args) => {
     return -1;
   }
   const configPath = _ensure_babel_config(opts);
-  const params = ["--config-file", configPath, ..._argumentify(args, false)];
+  const hasConfigArg = Object.keys(args).find((e) => e === "config-file");
+  const params = [
+    ...(hasConfigArg ? [] : ["--config-file", configPath]),
+    ..._argumentify(args, false),
+  ];
   const options = {
     cwd: opts.rootDir,
     env: { ...process.env, FORCE_COLOR: "1" },
