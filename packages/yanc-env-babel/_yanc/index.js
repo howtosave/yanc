@@ -105,36 +105,38 @@ const _ensure_eslint_config = (opts) =>
   _ensure_base_config(opts) && _update_eslint_config(opts, {}, true);
 
 const _update_babel_config = (opts, { reset = false }, skipIfExisting = false) => {
-  const outputConfigPath = path.resolve(path.join(opts.rootDir, ".babelrc.json"));
-  if (skipIfExisting && fs.existsSync(outputConfigPath)) return outputConfigPath;
+  const outputConfigPaths = [".babelrc", ".babelrc.browser"].map((configFile) => {
+    const outputConfigPath = path.resolve(path.join(opts.rootDir, `${configFile}.json`));
+    if (skipIfExisting && fs.existsSync(outputConfigPath)) return outputConfigPath;
 
-  const remoteConfigToMerge =
-    opts.envBabel && opts.envBabel.babelConfigFile
-      ? path.resolve(path.join(opts.rootDir, opts.envBabel.babelConfigFile))
-      : outputConfigPath;
+    const remoteConfigToMerge =
+      opts.envBabel && opts.envBabel.babelConfigFile
+        ? path.resolve(path.join(opts.rootDir, opts.envBabel.babelConfigFile))
+        : outputConfigPath;
 
-  let config;
-  if (!reset && fs.existsSync(remoteConfigToMerge)) {
-    config = _.mergeWith(
-      require(remoteConfigToMerge), // remote, obj
-      require("../.babelrc"), // local, src
-      (objVal, srcVal, key, object) => {
-        if (objVal === undefined) {
-          // skip when no key on remote's
-          _.unset(object, key);
-        } else if (objVal !== srcVal) {
-          // use remote's value
-          return objVal;
+    let config;
+    if (!reset && fs.existsSync(remoteConfigToMerge)) {
+      config = _.mergeWith(
+        require(remoteConfigToMerge), // remote, obj
+        require(`../${configFile}`), // local, src
+        (objVal, srcVal, key, object) => {
+          if (objVal === undefined) {
+            // skip when no key on remote's
+            _.unset(object, key);
+          } else if (objVal !== srcVal) {
+            // use remote's value
+            return objVal;
+          }
         }
-      }
-    );
-  } else {
-    config = require("../.babelrc");
-  }
+      );
+    } else {
+      config = require(`../${configFile}`);
+    }
+    fs.writeFileSync(outputConfigPath, JSON.stringify(config, null, 2));
+    return outputConfigPath;
+  });
 
-  fs.writeFileSync(outputConfigPath, JSON.stringify(config, null, 2));
-
-  return outputConfigPath;
+  return outputConfigPaths.length > 0 ? outputConfigPaths : null;
 };
 
 const _ensure_babel_config = (opts) =>
@@ -363,10 +365,10 @@ const babel = async (opts, args) => {
     console.error(`!!! not found babel. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _ensure_babel_config(opts);
+  const configPaths = _ensure_babel_config(opts);
   const hasConfigArg = Object.keys(args).find((e) => e === "config-file");
   const params = [
-    ...(hasConfigArg ? [] : ["--config-file", configPath]),
+    ...(hasConfigArg ? [] : ["--config-file", configPaths[0]]),
     ..._argumentify(args, false),
   ];
   const options = {
@@ -376,7 +378,7 @@ const babel = async (opts, args) => {
 
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPath);
+    console.log(">>> config file path:", configPaths);
     console.log(">>> params:", params);
   }
 

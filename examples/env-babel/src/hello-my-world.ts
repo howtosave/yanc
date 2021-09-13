@@ -3,8 +3,6 @@ import my from "~/src/lib/my";
 import world from "~/lib/world";
 import nsworld from "~/lib/namespace-world";
 
-const sym = Symbol();
-
-console.log(">>>", hello(), my(), world(), nsworld(), sym.toString());
+console.log(">>>", hello(), my(), world(), nsworld());
 // export libs
 export { hello, my, world };

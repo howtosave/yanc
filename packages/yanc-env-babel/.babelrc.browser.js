@@ -1,7 +1,12 @@
 const { babel: aliases } = require("./pathconfig.json");
 
 const presetEnvOptions = {
-  targets: { node: "current" }
+  targets: "> 0.25%, not dead",
+  useBuiltIns: "usage", 
+  corejs: {
+    version: "^3.17.0", 
+    proposals: true,
+  },
 };
 
 module.exports = {

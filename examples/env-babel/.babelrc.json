@@ -44,9 +44,6 @@
     ]
   ],
   "env": {
-    "development": {
-      "presets": []
-    },
     "production": {
       "ignore": [
         "**/*.spec.js",

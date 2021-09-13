@@ -17,12 +17,13 @@
     "conf:reset": "yanc babel configure --reset"
   },
   "dependencies": {
+    "@babel/runtime-corejs3": "~7.15.4",
     "camel-case": "~4.1.2"
   },
   "devDependencies": {
     "@yanc/cli": "*",
     "@yanc/env-babel": "*",
-    "core-js": "^3.17.3"
+    "core-js": "3"
   },
   "license": "MIT",
   "yanc": {
