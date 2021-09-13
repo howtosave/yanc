@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "yanc babel exec ./src/index.ts",
     "test": "yanc babel test .",
+    "test2": "yanc babel test -c ./jest.config.js .",
     "lint": "yanc babel lint .",
+    "lint2": "yanc babel lint -c ./.eslintrc.json .",
     "lint:fix": "yarn lint --fix",
     "dist": "yanc babel build ./src -x .js,.ts --out-dir ./dist --env-name production",
+    "dist2": "yanc babel build --config-file ./.babelrc.json  ./src -x .js,.ts --out-dir ./dist --env-name production",
     "dist:clean": "rm -rf ./dist",
     "start": "node ./dist/index.js",
     "conf": "yanc babel configure",
