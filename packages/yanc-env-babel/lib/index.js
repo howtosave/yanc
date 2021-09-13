@@ -288,8 +288,8 @@ const eslint = async (opts, args) => {
 
   const eslintProcess = spawn(binPath, params, options);
 
-  eslintProcess.stdout.on("data", (data) => console.log(`${data}`));
-  eslintProcess.stderr.on("data", (data) => console.error(`${data}`));
+  eslintProcess.stdout.on("data", (data) => process.stdout.write(`${data}`));
+  eslintProcess.stderr.on("data", (data) => process.stderr.write(`${data}`));
   eslintProcess.on(
     "close",
     (code) => code !== 0 && console.error(`lint process exited with code ${code}`)
@@ -385,8 +385,8 @@ const babel = async (opts, args) => {
 
   const babelProcess = spawn(binPath, params, options);
 
-  babelProcess.stdout.on("data", (data) => console.log(`${data}`));
-  babelProcess.stderr.on("data", (data) => console.error(`${data}`));
+  babelProcess.stdout.on("data", (data) => process.stdout.write(`${data}`));
+  babelProcess.stderr.on("data", (data) => process.stderr.write(`${data}`));
   babelProcess.on(
     "close",
     (code) => code !== 0 && console.error(`babel process exited with code ${code}`)
