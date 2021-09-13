@@ -321,9 +321,9 @@ const jest = async (opts, args) => {
     ...(hasConfigArg ? [] : ["--config", configPath]),
     "--rootDir",
     `${opts.rootDir}`,
-    "--roots",
-    `${opts.rootDir}`,
-    ..._argumentify(args),
+    ..._argumentify(args, false),
+    // remove --roots to fix test dir issue
+    // "--roots", `${opts.rootDir}`,
   ];
   const options = {
     cwd: opts.rootDir,
@@ -338,8 +338,8 @@ const jest = async (opts, args) => {
 
   const jestProcess = spawn(binPath, params, options);
 
-  jestProcess.stdout.on("data", (data) => console.log(`${data}`));
-  jestProcess.stderr.on("data", (data) => console.error(`${data}`));
+  jestProcess.stdout.on("data", (data) => process.stdout.write(`${data}`));
+  jestProcess.stderr.on("data", (data) => process.stderr.write(`${data}`));
   jestProcess.on(
     "close",
     (code) => code !== 0 && console.error(`jest process exited with code ${code}`)
