@@ -3,8 +3,11 @@
     [
       "@babel/preset-env",
       {
-        "targets": {
-          "node": "current"
+        "targets": "> 0.25%, not dead",
+        "useBuiltIns": "usage",
+        "corejs": {
+          "version": "3.17.0",
+          "proposals": true
         }
       }
     ],
@@ -44,9 +47,6 @@
     ]
   ],
   "env": {
-    "development": {
-      "presets": []
-    },
     "production": {
       "ignore": [
         "**/*.spec.js",
