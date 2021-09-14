@@ -3,45 +3,51 @@
 //
 
 const path = require("path");
-const yargs = require("yargs/yargs");
-const { hideBin } = require("yargs/helpers");
 
-const options = {};
-
-const harg = yargs(hideBin(process.argv));
-const argv = harg
-  .usage("Usage: yanc <env> <command> [options]")
-  .example("yanc babel test", "")
-  .options(options)
-  .demandCommand(2)
-  // see https://github.com/yargs/yargs-parser#configuration
-  .parserConfiguration({
-    "boolean-negation": false,
-    "camel-case-expansion": false,
-  })
-  .help("h")
-  .epilog("copyright 2019").argv;
-
-const pluginName = argv._.shift();
-const command = argv._.shift();
-
-/**
- * @param {number} code exit code
- */
-function exit(code, showHelp = false) {
-  if (showHelp) harg.showHelp();
-  process.exit(code);
+const usage = (msg) => {
+  if (msg) {
+    console.log(msg);
+    console.log("");
+  }
+  console.log("Usage: yanc <env> <command> [options]");
+  console.log("");
+  console.log("-h, --help               print help");
+  console.log("");
 }
 
+const { argv } = process;
+
+if (argv.length < 3) {
+  usage();
+  process.exit(1);
+}
+if (argv[2] === "-h" || argv[2] === "--help") {
+  usage();
+  process.exit(0);
+}
+if (argv.length < 4) {
+  // shoud have <plugin> <command>
+  usage("No command specified");
+  process.exit(1);
+}
+const pluginName = argv[2];
 const plugin = require(`@yanc/env-${pluginName}`);
 if (!plugin) {
   console.error("!!! no plugin:", pluginName);
-  exit(1, true);
+  process.exit(1);
 }
+const command = plugin[argv[3]];
+if (!command || typeof command !== "function") {
+  console.error(`!!! invalid command, ${argv[3]} for plugin, env-${pluginName}`);
+  console.error(`    valid commands are ${Object.keys(plugin).join(", ")}`);
+  process.exit(1);
+}
+// arguments for plugin
+const args = [...argv.slice(4)];
 
-/**
- * @param {any} opt user option
- */
+//
+// @param {any} opt user option
+//
 const withDefaultOpts = (opt) => ({
   verbose: false,
   rootDir: process.cwd(),
@@ -53,18 +59,14 @@ const withDefaultOpts = (opt) => ({
 (async () => {
   // yanc options from user's package.json
   const { yanc = {} } = require(path.resolve(path.join(process.cwd(), "package.json")));
-
   // call plugin
-  const res = await plugin[command](
+  const res = await command(
     withDefaultOpts(yanc),
-    Object.keys(argv).reduce((acc, k) => {
-      if (k !== "$0") acc[k] = argv[k];
-      return acc;
-    }, {})
+    args
   );
 
   if (res !== 0) {
-    harg.showHelp();
+    usage();
     process.exit(res);
   }
 })();

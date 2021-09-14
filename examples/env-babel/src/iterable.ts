@@ -5,5 +5,5 @@ iterable[Symbol.iterator] = function* () {
   yield 2;
   yield 3;
 };
-
+ 
 export { iterable };

@@ -184,6 +184,35 @@ const _update_jest_config = (opts, { reset = false }, skipIfExisting = false) =>
 const _ensure_jest_config = (opts) =>
   _ensure_base_config(opts) && _update_jest_config(opts, {}, true);
 
+const _processArgs = (args, options) => {
+  const res = {};
+  Object.keys(options).forEach((key) => {
+    const idx = args.findIndex((e) => e === `--${key}` || (options[key].alias && e === `-${options[key].alias}`));
+    if (idx >= 0) {
+      if (options[key].type === "boolean") {
+        res[key] = true;
+        // remove from args
+        args.splice(idx, 1);
+      } else {
+        if (idx + 1 === args.length || args[idx+1].startsWith("-")) {
+          // invalid input. set default value if possible
+          if (options[key].default !== undefined) res[key] = options[key].default;
+          // remove from args
+          args.splice(idx, 1);
+        } else {
+          res[key] = args[idx+1];
+          // remove key and value from args
+          args.splice(idx, 2);
+        }
+      }
+    } else {
+      if (options[key].default !== undefined) res[key] = options[key].default;
+    }
+  });
+  res["_"] = args;
+  return res;
+}
+
 /**
  * exports config files
  *
@@ -195,17 +224,26 @@ const _export = async (opts, args) => {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
+  const argv = _processArgs(args, { 
+    reset: {
+      type: "boolean",
+      default: false
+    }
+  });
+  if (opts.verbose) {
+    console.log(">>> argv:", argv);
+  }
 
-  _update_base_config(opts, args);
+  _update_base_config(opts, argv);
   console.log(">>> [yanc-env-babel] updated base config files");
 
-  const lintConfigPath = _update_eslint_config(opts, args);
+  const lintConfigPath = _update_eslint_config(opts, argv);
   console.log(">>> [yanc-env-babel] updated lint config file:", lintConfigPath);
 
-  const jestConfigPath = _update_jest_config(opts, args);
+  const jestConfigPath = _update_jest_config(opts, argv);
   console.log(">>> [yanc-env-babel] updated jest config file:", jestConfigPath);
 
-  const babelConfigPath = _update_babel_config(opts, args);
+  const babelConfigPath = _update_babel_config(opts, argv);
   console.log(">>> [yanc-env-babel] updated babel config file:", babelConfigPath);
 
   return 0;
@@ -267,12 +305,18 @@ const eslint = async (opts, args) => {
     console.error(`!!! not found eslint. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _ensure_eslint_config(opts);
-  const hasConfigArg = Object.keys(args).find((e) => e === "config" || e === "c");
+
+  const argv = _processArgs(args, { 
+    config: {
+      alias: "c",
+      default: _ensure_eslint_config(opts),
+    }
+  });
   const params = [
-    ...(hasConfigArg ? [] : ["--config", configPath]),
+    "--config",
+    argv.config,
     "--no-eslintrc",
-    ..._argumentify(args, false),
+    ...argv["_"],
   ];
   const options = {
     cwd: opts.rootDir,
@@ -281,7 +325,7 @@ const eslint = async (opts, args) => {
 
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPath);
+    console.log(">>> argv:", argv);
     console.log(">>> params:", params);
     //console.log(">>> options:", options);
   }
@@ -294,7 +338,7 @@ const eslint = async (opts, args) => {
     "close",
     (code) => code !== 0 && console.error(`lint process exited with code ${code}`)
   );
-  eslintProcess.on("error", (err) => console.error("!!! [yanc-env-babel:lint]", err));
+  eslintProcess.on("error", (err) => console.error("!!! [yanc-env-babel: lint]", err));
 
   return 0;
 };
@@ -315,13 +359,19 @@ const jest = async (opts, args) => {
     console.error(`!!! not found jest. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPath = _ensure_jest_config(opts);
-  const hasConfigArg = Object.keys(args).find((e) => e === "config" || e === "c");
+
+  const argv = _processArgs(args, { 
+    config: {
+      alias: "c",
+      default: _ensure_jest_config(opts),
+    }
+  });
   const params = [
-    ...(hasConfigArg ? [] : ["--config", configPath]),
+    "--config",
+    argv.config,
     "--rootDir",
     `${opts.rootDir}`,
-    ..._argumentify(args, false),
+    ...argv["_"],
     // remove --roots to fix test dir issue
     // "--roots", `${opts.rootDir}`,
   ];
@@ -332,7 +382,7 @@ const jest = async (opts, args) => {
 
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPath);
+    console.log(">>> argv:", argv);
     console.log(">>> params:", params);
   }
 
@@ -344,7 +394,7 @@ const jest = async (opts, args) => {
     "close",
     (code) => code !== 0 && console.error(`jest process exited with code ${code}`)
   );
-  jestProcess.on("error", (err) => console.error("!!! [yanc-env-babel:jest]", err));
+  jestProcess.on("error", (err) => console.error("!!! [yanc-env-babel: jest]", err));
 
   return 0;
 };
@@ -365,12 +415,17 @@ const babel = async (opts, args) => {
     console.error(`!!! not found babel. set 'nodeLinker: node-modules' if using yarn`);
     return -1;
   }
-  const configPaths = _ensure_babel_config(opts);
-  const hasConfigArg = Object.keys(args).find((e) => e === "config-file");
+
+  const argv = _processArgs(args, { 
+    "config-file": {
+      default: _ensure_babel_config(opts)[0],
+    }
+  });
   const params = [
-    ...(hasConfigArg ? [] : ["--config-file", configPaths[0]]),
+    "--config-file",
+    argv["config-file"],
     "--no-babelrc",
-    ..._argumentify(args, false),
+    ...argv["_"],
   ];
   const options = {
     cwd: opts.rootDir,
@@ -379,7 +434,7 @@ const babel = async (opts, args) => {
 
   if (opts.verbose) {
     console.log(">>> bin path:", binPath);
-    console.log(">>> config file path:", configPaths);
+    console.log(">>> argv:", argv);
     console.log(">>> params:", params);
   }
 
@@ -391,7 +446,7 @@ const babel = async (opts, args) => {
     "close",
     (code) => code !== 0 && console.error(`babel process exited with code ${code}`)
   );
-  babelProcess.on("error", (err) => console.error("!!! [yanc-env-babel:babel]", err));
+  babelProcess.on("error", (err) => console.error("!!! [yanc-env-babel: babel]", err));
 
   return 0;
 };
@@ -450,11 +505,11 @@ const node = async (opts, args) => {
   // babel config file should be located in the remote root directory
   _ensure_babel_config(opts);
 
-  if (args._.length > 0) {
+  if (args.length > 0) {
     // run script file
-    // remove script file arguement from args array
-    const scriptPath = _create_script_file(args._.shift(), opts);
-    const params = [..._argumentify(args, false)];
+    // remove script file argument from args array
+    const scriptPath = _create_script_file(args.shift(), opts);
+    const params = [...args];
     const options = {
       cwd: opts.rootDir,
     };
@@ -470,19 +525,19 @@ const node = async (opts, args) => {
       "close",
       (code) => code !== 0 && console.error(`node process exited with code ${code}`)
     );
-    childProcess.on("error", (err) => console.error("!!! [yanc-env-babel:node]", err));
+    childProcess.on("error", (err) => console.error("!!! [yanc-env-babel: node]", err));
   } else {
     // run node
     exec(
-      `node ${_argumentify(args).join(" ")}`,
+      `node ${args.join(" ")}`,
       {
         cwd: opts.rootDir,
       },
       (error, stdout, stderr) => {
-        console.log(`${stdout}`);
-        console.error(`${stderr}`);
+        process.stdout.write(`${stdout}`);
+        process.stderr.write(`${stderr}`);
         if (error) {
-          console.error(`!!! [yanc-env-babel]: ${error}`);
+          console.error(`!!! [yanc-env-babel: node exe]: ${error}`);
         }
       }
     );
