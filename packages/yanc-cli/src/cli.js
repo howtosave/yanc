@@ -13,7 +13,7 @@ const usage = (msg) => {
   console.log("");
   console.log("-h, --help               print help");
   console.log("");
-}
+};
 
 const { argv } = process;
 
@@ -60,10 +60,7 @@ const withDefaultOpts = (opt) => ({
   // yanc options from user's package.json
   const { yanc = {} } = require(path.resolve(path.join(process.cwd(), "package.json")));
   // call plugin
-  const res = await command(
-    withDefaultOpts(yanc),
-    args
-  );
+  const res = await command(withDefaultOpts(yanc), args);
 
   if (res !== 0) {
     usage();

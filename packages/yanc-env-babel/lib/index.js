@@ -187,20 +187,22 @@ const _ensure_jest_config = (opts) =>
 const _processArgs = (args, options) => {
   const res = {};
   Object.keys(options).forEach((key) => {
-    const idx = args.findIndex((e) => e === `--${key}` || (options[key].alias && e === `-${options[key].alias}`));
+    const idx = args.findIndex(
+      (e) => e === `--${key}` || (options[key].alias && e === `-${options[key].alias}`)
+    );
     if (idx >= 0) {
       if (options[key].type === "boolean") {
         res[key] = true;
         // remove from args
         args.splice(idx, 1);
       } else {
-        if (idx + 1 === args.length || args[idx+1].startsWith("-")) {
+        if (idx + 1 === args.length || args[idx + 1].startsWith("-")) {
           // invalid input. set default value if possible
           if (options[key].default !== undefined) res[key] = options[key].default;
           // remove from args
           args.splice(idx, 1);
         } else {
-          res[key] = args[idx+1];
+          res[key] = args[idx + 1];
           // remove key and value from args
           args.splice(idx, 2);
         }
@@ -211,7 +213,7 @@ const _processArgs = (args, options) => {
   });
   res["_"] = args;
   return res;
-}
+};
 
 /**
  * exports config files
@@ -224,11 +226,11 @@ const _export = async (opts, args) => {
     console.log(">>> opts:", opts);
     console.log(">>> args:", args);
   }
-  const argv = _processArgs(args, { 
+  const argv = _processArgs(args, {
     reset: {
       type: "boolean",
-      default: false
-    }
+      default: false,
+    },
   });
   if (opts.verbose) {
     console.log(">>> argv:", argv);
@@ -306,18 +308,13 @@ const eslint = async (opts, args) => {
     return -1;
   }
 
-  const argv = _processArgs(args, { 
+  const argv = _processArgs(args, {
     config: {
       alias: "c",
       default: _ensure_eslint_config(opts),
-    }
+    },
   });
-  const params = [
-    "--config",
-    argv.config,
-    "--no-eslintrc",
-    ...argv["_"],
-  ];
+  const params = ["--config", argv.config, "--no-eslintrc", ...argv["_"]];
   const options = {
     cwd: opts.rootDir,
     env: { ...process.env, FORCE_COLOR: "1" },
@@ -360,11 +357,11 @@ const jest = async (opts, args) => {
     return -1;
   }
 
-  const argv = _processArgs(args, { 
+  const argv = _processArgs(args, {
     config: {
       alias: "c",
       default: _ensure_jest_config(opts),
-    }
+    },
   });
   const params = [
     "--config",
@@ -416,17 +413,12 @@ const babel = async (opts, args) => {
     return -1;
   }
 
-  const argv = _processArgs(args, { 
+  const argv = _processArgs(args, {
     "config-file": {
       default: _ensure_babel_config(opts)[0],
-    }
+    },
   });
-  const params = [
-    "--config-file",
-    argv["config-file"],
-    "--no-babelrc",
-    ...argv["_"],
-  ];
+  const params = ["--config-file", argv["config-file"], "--no-babelrc", ...argv["_"]];
   const options = {
     cwd: opts.rootDir,
     env: { ...process.env, FORCE_COLOR: "1" },
