@@ -1,0 +1,41 @@
+{
+  "name": "@yanc/env-typescript",
+  "version": "1.3.3",
+  "main": "_yanc/index.js",
+  "scripts": {
+    "dev": "tsc --build && node ./.cache/index.js",
+    "dev:watch": "nodemon --watch ./src --ext js,ts --delay 1000ms --exec 'yarn dev'",
+    "lint": "eslint .",
+    "lint:fix": "yarn lint --fix",
+    "dist": "tsc -p ./tsconfig.production.json && yarn dist:type",
+    "dist:type": "tsc --declaration --emitDeclarationOnly --outFile ./dist/types.d.ts -p ./tsconfig.production.json",
+    "clean": "rm -rf ./dist ./.cache",
+    "start": "node ./dist/index.js",
+    "ver": "yarn version -i",
+    "all": "yarn lint && yarn dist && yarn start && yarn dist:clean"
+  },
+  "files": [
+    ".eslintrc.js",
+    "jsconfig.json",
+    "pathconfig.json",
+    "tsconfig.json",
+    "tsconfig.production.json"
+  ],
+  "dependencies": {
+    "@types/node": "~16.7.0",
+    "@typescript-eslint/eslint-plugin": "~4.30.0",
+    "@typescript-eslint/parser": "~4.30.0",
+    "eslint": "~7.32.0",
+    "eslint-config-prettier": "~8.3.0",
+    "eslint-import-resolver-typescript": "~2.4.0",
+    "eslint-plugin-import": "~2.24.2",
+    "eslint-plugin-json": "~3.1.0",
+    "eslint-plugin-prettier": "~4.0.0",
+    "lodash": "^4.17.21",
+    "prettier": "~2.3.2",
+    "typescript": "~4.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "~2.0.12"
+  }
+}
