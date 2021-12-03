@@ -27,6 +27,7 @@
   },
   "license": "MIT",
   "yanc": {
-    "verbose": true
+    "verbose": true,
+    "browser": false
   }
 }
