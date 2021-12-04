@@ -1,0 +1,6 @@
+[submodule "packages/yanc-cli"]
+	path = packages/yanc-cli
+	url = git@aistyler.github.com:aistyler/yanc-cli.git
+[submodule "packages/yanc-env-babel"]
+	path = packages/yanc-env-babel
+	url = git@aistyler.github.com:aistyler/yanc-env-babel.git
